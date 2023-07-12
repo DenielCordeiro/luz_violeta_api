@@ -1,5 +1,5 @@
 import express from 'express';
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
 import routes from './routes';
@@ -10,10 +10,11 @@ class App {
     this.middlewares();
     this.routes();
 
-    // mongoose.connect('mongodb+srv://devhouse:devhouse@node.ydha1zq.mongodb.net/devhouse', {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    // });
+    // ip database 186.224.135.20/32
+    mongoose.connect('mongodb+srv://luzvioleta:violeta@luzvioleta.h2xeiso.mongodb.net/luzvioleta', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   }
 
   middlewares() {

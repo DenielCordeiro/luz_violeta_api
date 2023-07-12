@@ -15,7 +15,7 @@ class ProductsController {
       valor: Yup.number().required(),
       name: Yup.string(),
       description: Yup.string(),
-      collection: Yup.string(),
+      groups: Yup.string(),
     });
 
     const { fileName } = req.file;
@@ -25,7 +25,7 @@ class ProductsController {
       valor,
       name,
       description,
-      collection,
+      groups,
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
@@ -37,7 +37,7 @@ class ProductsController {
       valor,
       name,
       description,
-      collection,
+      groups,
       image: fileName,
     });
 
@@ -50,7 +50,7 @@ class ProductsController {
       valor: Yup.number().required(),
       name: Yup.string(),
       description: Yup.string(),
-      collection: Yup.string(),
+      groups: Yup.string(),
     });
 
     const { fileName } = req.file;
@@ -61,7 +61,7 @@ class ProductsController {
       valor,
       name,
       description,
-      collection,
+      groups,
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
@@ -73,7 +73,7 @@ class ProductsController {
       valor,
       name,
       description,
-      collection,
+      groups,
       image: fileName,
     });
 

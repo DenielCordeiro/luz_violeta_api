@@ -6,7 +6,7 @@ const ProductsSchema = new Schema({
   valor: Number,
   name: String,
   description: String,
-  collection: String,
+  groups: String,
   image: String,
 }, {
   toJSON: {
