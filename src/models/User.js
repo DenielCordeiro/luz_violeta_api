@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-unused-vars */
 import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
