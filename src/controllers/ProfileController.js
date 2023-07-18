@@ -51,6 +51,10 @@ class ProfileController {
       address: Yup.string().required(),
     });
 
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Falha na validação dos campos!' });
+    }
+
     const { user_id } = req.params;
 
     const {
@@ -62,10 +66,6 @@ class ProfileController {
 
     const securityForce = 6;
     const hashedPassword = bcrypt.hashSync(password, securityForce);
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação dos campos!' });
-    }
 
     await User.updateOne({ _id: user_id }, {
       email,
