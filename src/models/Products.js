@@ -16,7 +16,7 @@ const ProductsSchema = new Schema({
 
 // eslint-disable-next-line func-names
 ProductsSchema.virtual('image_url').get(function () {
-  return `http://localhost:3333/files/${this.images}`;
+  return `http://localhost:3333/files/${this.image}`;
 });
 
 export default model('Products', ProductsSchema);

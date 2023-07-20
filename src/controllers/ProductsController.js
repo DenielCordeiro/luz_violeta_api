@@ -18,7 +18,7 @@ class ProductsController {
       groups: Yup.string(),
     });
 
-    const { fileName } = req.file;
+    const { filename } = req.file;
 
     const {
       type,
@@ -32,25 +32,16 @@ class ProductsController {
       return res.status(400).json({ erro: 'Falha na validação dos campos!' });
     }
 
-    // const product = await Products.create({
-    //   type,
-    //   valor,
-    //   name,
-    //   description,
-    //   groups,
-    //   image: fileName,
-    // });
+    const product = await Products.create({
+      type,
+      valor,
+      name,
+      description,
+      groups,
+      image: filename,
+    });
 
-    console.log('type: ', type);
-    console.log('valor: ', valor);
-    console.log('name: ', name);
-    console.log('description: ', description);
-    console.log('groups: ', groups);
-    console.log('image: ', fileName);
-
-    // return res.json(product);
-
-    return res.send();
+    return res.json(product);
   }
 
   async update(req, res) {
@@ -62,8 +53,7 @@ class ProductsController {
       groups: Yup.string(),
     });
 
-    const { fileName } = req.file;
-    const { product_id } = req.params;
+    const { filename } = req.file;
 
     const {
       type,
@@ -71,6 +61,7 @@ class ProductsController {
       name,
       description,
       groups,
+      product_id,
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
@@ -83,7 +74,7 @@ class ProductsController {
       name,
       description,
       groups,
-      image: fileName,
+      image: filename,
     });
 
     return res.send();
