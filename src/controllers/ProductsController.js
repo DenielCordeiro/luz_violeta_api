@@ -32,22 +32,31 @@ class ProductsController {
       return res.status(400).json({ erro: 'Falha na validação dos campos!' });
     }
 
-    const product = await Products.create({
-      type,
-      valor,
-      name,
-      description,
-      groups,
-      image: fileName,
-    });
+    // const product = await Products.create({
+    //   type,
+    //   valor,
+    //   name,
+    //   description,
+    //   groups,
+    //   image: fileName,
+    // });
 
-    return res.json(product);
+    console.log('type: ', type);
+    console.log('valor: ', valor);
+    console.log('name: ', name);
+    console.log('description: ', description);
+    console.log('groups: ', groups);
+    console.log('image: ', fileName);
+
+    // return res.json(product);
+
+    return res.send();
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      type: Yup.string().required(),
-      valor: Yup.number().required(),
+      type: Yup.string(),
+      valor: Yup.number(),
       name: Yup.string(),
       description: Yup.string(),
       groups: Yup.string(),

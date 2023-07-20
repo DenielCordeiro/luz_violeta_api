@@ -45,19 +45,18 @@ class ProfileController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      email: Yup.string().email().required(),
-      password: Yup.string().required(),
-      name: Yup.string().required(),
-      address: Yup.string().required(),
+      email: Yup.string().email(),
+      password: Yup.string(),
+      name: Yup.string(),
+      address: Yup.string(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Falha na validação dos campos!' });
     }
 
-    const { user_id } = req.params;
-
     const {
+      user_id,
       email,
       password,
       name,
