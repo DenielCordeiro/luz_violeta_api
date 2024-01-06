@@ -7,6 +7,9 @@ const UserSchema = new Schema({
   password: String,
   name: String,
   address: String,
+  products: {
+    products_id: Number,
+  },
 });
 
 export default model('User', UserSchema);
