@@ -24,6 +24,8 @@ class SessionController {
 
     const user = await User.findOne({ email });
     const userPassword = await user.password;
+    const user_id = await user._id;
+    const products = await user.allProducts;
 
     if (!user) {
       return res.status(401).json({ error: 'E-mail não existe.' });
@@ -44,9 +46,11 @@ class SessionController {
     return res.json({
       user: {
         id,
+        user_id,
         name,
         email,
         address,
+        products,
       },
       token: Jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,

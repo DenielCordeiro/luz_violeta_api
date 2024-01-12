@@ -3,13 +3,13 @@ import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
   id: Number,
+  allProducts: {
+    product: String,
+  },
   email: String,
   password: String,
   name: String,
   address: String,
-  products: {
-    products_id: Number,
-  },
 });
 
 export default model('User', UserSchema);

@@ -18,7 +18,7 @@ class ProductsController {
       groups: Yup.string(),
     });
 
-    const { filename } = req.file;
+    const filename = req.file;
 
     const {
       type,

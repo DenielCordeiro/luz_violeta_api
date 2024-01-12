@@ -7,11 +7,12 @@ import authMiddleware from './middlewares/auth';
 import SessionController from './controllers/SessionController';
 import ProfileController from './controllers/ProfileController';
 import ProductsController from './controllers/ProductsController';
+import CartController from './controllers/CartController';
 
 const routes = new Router();
 const upload = multer(uploadConfig);
 
-routes.get('/sessions', SessionController.store);
+routes.get('/session', SessionController.store);
 
 routes.get('/profile', authMiddleware, ProfileController.index);
 routes.post('/profile', ProfileController.store);
@@ -22,5 +23,7 @@ routes.get('/products', ProductsController.index);
 routes.post('/products', upload.single('image_url'), authMiddleware, ProductsController.store);
 routes.put('/products/:product_id', upload.single('image_url'), authMiddleware, ProductsController.update);
 routes.delete('/products', authMiddleware, ProductsController.destroy);
+routes.get('/products', ProductsController.index);
+routes.post('/cart', CartController.addCartProduct);
 
 export default routes;
