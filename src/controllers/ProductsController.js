@@ -18,7 +18,7 @@ class ProductsController {
       groups: Yup.string(),
     });
 
-    const { fileName } = req.file;
+    const filename = req.file;
 
     const {
       type,
@@ -38,7 +38,7 @@ class ProductsController {
       name,
       description,
       groups,
-      image: fileName,
+      image: filename,
     });
 
     return res.json(product);
@@ -46,15 +46,14 @@ class ProductsController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      type: Yup.string().required(),
-      valor: Yup.number().required(),
+      type: Yup.string(),
+      valor: Yup.number(),
       name: Yup.string(),
       description: Yup.string(),
       groups: Yup.string(),
     });
 
-    const { fileName } = req.file;
-    const { product_id } = req.params;
+    const { filename } = req.file;
 
     const {
       type,
@@ -62,6 +61,7 @@ class ProductsController {
       name,
       description,
       groups,
+      product_id,
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
@@ -74,7 +74,7 @@ class ProductsController {
       name,
       description,
       groups,
-      image: fileName,
+      image: filename,
     });
 
     return res.send();

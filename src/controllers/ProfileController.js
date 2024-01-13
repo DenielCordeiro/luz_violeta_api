@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import * as Yup from 'yup';
+import bcrypt from 'bcryptjs';
 import User from '../models/User';
 
 class ProfileController {
@@ -28,9 +30,12 @@ class ProfileController {
       return res.status(400).json({ error: 'Falha na Validação dos campos!' });
     }
 
+    const securityForce = 6;
+    const hashedPassword = bcrypt.hashSync(password, securityForce);
+
     const profiles = await User.create({
       email,
-      password,
+      password: hashedPassword,
       name,
       address,
     });
@@ -40,28 +45,30 @@ class ProfileController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      email: Yup.string().email().required(),
-      password: Yup.string().required(),
-      name: Yup.string().required(),
-      address: Yup.string().required(),
+      email: Yup.string().email(),
+      password: Yup.string(),
+      name: Yup.string(),
+      address: Yup.string(),
     });
 
-    const { user_id } = req.params;
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Falha na validação dos campos!' });
+    }
 
     const {
+      user_id,
       email,
       password,
       name,
       address,
     } = req.body;
 
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação dos campos!' });
-    }
+    const securityForce = 6;
+    const hashedPassword = bcrypt.hashSync(password, securityForce);
 
     await User.updateOne({ _id: user_id }, {
       email,
-      password,
+      password: hashedPassword,
       name,
       address,
     });
