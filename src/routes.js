@@ -23,7 +23,6 @@ routes.get('/products', ProductsController.index);
 routes.post('/products', upload.single('image_url'), authMiddleware, ProductsController.store);
 routes.put('/products/:product_id', upload.single('image_url'), authMiddleware, ProductsController.update);
 routes.delete('/products', authMiddleware, ProductsController.destroy);
-routes.get('/products', ProductsController.index);
-routes.post('/cart', CartController.addCartProduct);
+routes.post('/cart', authMiddleware, CartController.addCartProduct);
 
 export default routes;
