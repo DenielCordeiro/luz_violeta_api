@@ -3,9 +3,6 @@ import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
   id: Number,
-  allProducts: {
-    product: String,
-  },
   email: String,
   password: String,
   name: String,
