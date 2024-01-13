@@ -4,8 +4,8 @@ import Products from '../models/Products';
 class ProductsController {
   async index(req, res) {
     const { allProducts } = req.params;
-    const products = await Products.find({ allProducts });
-
+    const data = await Products.find({ allProducts });
+    const products = { data };
     return res.json(products);
   }
 
