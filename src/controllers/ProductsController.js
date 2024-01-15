@@ -6,7 +6,16 @@ class ProductsController {
     const { allProducts } = req.params;
     const data = await Products.find({ allProducts });
     const products = { data };
+
     return res.json(products);
+  }
+
+  async indexProduct(req, res) {
+    const { product_id } = req.body;
+    const data = await Products.findById(product_id);
+    const product = { data };
+
+    return res.json(product);
   }
 
   async store(req, res) {
@@ -82,7 +91,6 @@ class ProductsController {
 
   async destroy(req, res) {
     const { product_id } = req.body;
-
     await Products.findByIdAndDelete({ _id: product_id });
 
     return res.send();

@@ -20,6 +20,7 @@ routes.put('/profile/:user_id', authMiddleware, ProfileController.update);
 routes.delete('/profile', authMiddleware, ProfileController.destroy);
 
 routes.get('/products', ProductsController.index);
+routes.get('/product', ProductsController.indexProduct);
 routes.post('/products', upload.single('image_url'), authMiddleware, ProductsController.store);
 routes.put('/products/:product_id', upload.single('image_url'), authMiddleware, ProductsController.update);
 routes.delete('/products', authMiddleware, ProductsController.destroy);
