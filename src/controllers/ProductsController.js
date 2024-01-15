@@ -11,7 +11,7 @@ class ProductsController {
   }
 
   async indexProduct(req, res) {
-    const { product_id } = req.body;
+    const { product_id } = req.params;
     const data = await Products.findById(product_id);
     const product = { data };
 
