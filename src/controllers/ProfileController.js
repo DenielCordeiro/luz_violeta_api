@@ -16,14 +16,22 @@ class ProfileController {
       email: Yup.string().email().required(),
       password: Yup.string().required(),
       name: Yup.string().required(),
-      address: Yup.string().required(),
+      cellphone: Yup.string(),
+      postalCode: Yup.string(),
+      street: Yup.string(),
+      neighborhood: Yup.string(),
+      houseNumber: Yup.number(),
     });
 
     const {
       email,
       password,
       name,
-      address,
+      cellphone,
+      postalCode,
+      street,
+      neighborhood,
+      houseNumber,
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
@@ -37,7 +45,11 @@ class ProfileController {
       email,
       password: hashedPassword,
       name,
-      address,
+      cellphone,
+      postalCode,
+      street,
+      neighborhood,
+      houseNumber,
     });
 
     return res.json(profiles);
@@ -48,7 +60,11 @@ class ProfileController {
       email: Yup.string().email(),
       password: Yup.string(),
       name: Yup.string(),
-      address: Yup.string(),
+      cellphone: Yup.string(),
+      postalCode: Yup.string(),
+      street: Yup.string(),
+      neighborhood: Yup.string(),
+      houseNumber: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -56,12 +72,17 @@ class ProfileController {
     }
 
     const {
-      user_id,
       email,
       password,
       name,
-      address,
+      cellphone,
+      postalCode,
+      street,
+      neighborhood,
+      houseNumber,
     } = req.body;
+
+    const user_id = req.params;
 
     const securityForce = 6;
     const hashedPassword = bcrypt.hashSync(password, securityForce);
@@ -70,14 +91,18 @@ class ProfileController {
       email,
       password: hashedPassword,
       name,
-      address,
+      cellphone,
+      postalCode,
+      street,
+      neighborhood,
+      houseNumber,
     });
 
     return res.send();
   }
 
   async destroy(req, res) {
-    const { user_id } = req.body;
+    const { user_id } = req.params;
 
     await User.findByIdAndDelete({ _id: user_id });
 

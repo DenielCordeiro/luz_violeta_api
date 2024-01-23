@@ -3,10 +3,14 @@ import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
   id: Number,
-  email: String,
-  password: String,
   name: String,
-  address: String,
+  email: String,
+  cellphone: String,
+  password: String,
+  postalCode: String,
+  street: String,
+  neighborhood: String,
+  houseNumber: Number,
 });
 
 export default model('User', UserSchema);
