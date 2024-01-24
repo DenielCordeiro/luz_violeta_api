@@ -8,28 +8,34 @@ import authConfig from '../config/auth';
 
 class SessionController {
   async store(req, res) {
-    const { email } = req.body;
-    const { password } = req.body;
+    const { email, password } = req.params;
+    let adm = false;
+
+    if (email === 'camila.luzvioleta@gmail.com' && password === 4019) {
+      adm = true;
+    } else {
+      adm = false;
+    }
 
     const schema = Yup.object().shape({
       email: Yup.string().email().required(),
       password: Yup.string().required(),
     });
 
-    if (!(await schema.isValid(req.body))) {
+    if (!(await schema.isValid(req.params))) {
       return res.status(400).json({
         error: '[Falha na validação]: E-mail ou Senha incorretos.',
       });
     }
 
     const user = await User.findOne({ email });
-    const userPassword = await user.password;
-    const user_id = await user._id;
-    const products = await user.allProducts;
 
     if (!user) {
       return res.status(401).json({ error: 'E-mail não existe.' });
     }
+
+    const userPassword = await user.password;
+    const user_id = await user._id;
 
     const bool = bcrypt.compareSync(password, userPassword);
 
@@ -40,21 +46,18 @@ class SessionController {
     const {
       id,
       name,
-      address,
     } = user;
 
     return res.json({
       user: {
-        id,
         user_id,
         name,
         email,
-        address,
-        products,
       },
       token: Jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,
       }),
+      administrator: adm,
     });
   }
 }

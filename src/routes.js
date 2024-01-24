@@ -12,7 +12,7 @@ import CartController from './controllers/CartController';
 const routes = new Router();
 const upload = multer(uploadConfig);
 
-routes.get('/session', SessionController.store);
+routes.get('/session/:email/:password', SessionController.store);
 
 routes.get('/profile', authMiddleware, ProfileController.index);
 routes.post('/profile', ProfileController.store);
