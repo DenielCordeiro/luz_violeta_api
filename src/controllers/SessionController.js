@@ -11,7 +11,7 @@ class SessionController {
     const { email, password } = req.params;
     let adm = false;
 
-    if (email === 'camila.luzvioleta@gmail.com' && password === 4019) {
+    if (email === 'camila.luzvioleta@gmail.com') {
       adm = true;
     } else {
       adm = false;

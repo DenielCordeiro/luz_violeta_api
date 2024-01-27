@@ -11,6 +11,10 @@ class ProfileController {
     return res.json(profiles);
   }
 
+  async indexProfile(req, res) {
+    return res.json({ ok: true });
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       email: Yup.string().email().required(),
