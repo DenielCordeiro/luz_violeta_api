@@ -15,6 +15,7 @@ const upload = multer(uploadConfig);
 routes.get('/session/:email/:password', SessionController.store);
 
 routes.get('/profile', authMiddleware, ProfileController.index);
+routes.get('/profile/:user_id', authMiddleware, ProfileController.indexProfile);
 routes.post('/profile', ProfileController.store);
 routes.put('/profile/:user_id', authMiddleware, ProfileController.update);
 routes.delete('/profile', authMiddleware, ProfileController.destroy);

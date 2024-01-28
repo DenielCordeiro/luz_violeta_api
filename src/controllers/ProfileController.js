@@ -12,7 +12,10 @@ class ProfileController {
   }
 
   async indexProfile(req, res) {
-    return res.json({ ok: true });
+    const { user_id } = req.params;
+    const data = await User.findById(user_id);
+
+    return res.json({ data });
   }
 
   async store(req, res) {

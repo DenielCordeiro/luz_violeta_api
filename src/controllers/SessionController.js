@@ -58,6 +58,7 @@ class SessionController {
         expiresIn: authConfig.expiresIn,
       }),
       administrator: adm,
+      user_id,
     });
   }
 }

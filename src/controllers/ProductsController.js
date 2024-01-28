@@ -13,9 +13,8 @@ class ProductsController {
   async indexProduct(req, res) {
     const { product_id } = req.params;
     const data = await Products.findById(product_id);
-    const product = { data };
 
-    return res.json(product);
+    return res.json({ data });
   }
 
   async store(req, res) {
