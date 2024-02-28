@@ -13,9 +13,9 @@ class ProfileController {
 
   async indexProfile(req, res) {
     const { user_id } = req.params;
-    const data = await User.findById(user_id);
+    const profile = await User.findById(user_id);
 
-    return res.json({ data });
+    return res.json({ profile });
   }
 
   async store(req, res) {
