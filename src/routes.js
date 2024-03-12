@@ -8,6 +8,7 @@ import SessionController from './controllers/SessionController';
 import ProfileController from './controllers/ProfileController';
 import ProductsController from './controllers/ProductsController';
 import CartController from './controllers/CartController';
+import MelhorEnvioController from './controllers/MelhorEnvioController';
 
 const routes = new Router();
 const upload = multer(uploadConfig);
@@ -26,5 +27,7 @@ routes.post('/products', upload.single('image_url'), authMiddleware, ProductsCon
 routes.put('/products/:product_id', upload.single('image_url'), authMiddleware, ProductsController.update);
 routes.delete('/products', authMiddleware, ProductsController.destroy);
 routes.post('/cart', authMiddleware, CartController.addCartProduct);
+
+routes.post('/melhor-envio', MelhorEnvioController.searchPostalCode);
 
 export default routes;
