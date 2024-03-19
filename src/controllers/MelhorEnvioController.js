@@ -30,15 +30,13 @@ class MelhorEnvioController {
       },
     };
 
-    // eslint-disable-next-line eqeqeq
-    // if (data == null || data == undefined) {
-    //   return res.status(400).json({
-    //     error: '[Erro]: Não está sendo enviado os dados do corpo corretamente',
-    //   });
-    // }
+    if (data == null || undefined) {
+      return res.status(400).json({
+        error: '[Erro]: Não está sendo enviado os dados do corpo corretamente',
+      });
+    }
 
     const getShipping = http.request(options, () => {
-      console.log(data);
       const chunks = [data];
 
       res.on('data', (chunk) => {
