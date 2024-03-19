@@ -4,7 +4,7 @@ class MelhorEnvioController {
   async searchPostalCode(req, res) {
     const options = {
       method: 'POST',
-      hostname: 'https://melhorenvio.com.br',
+      hostname: 'melhorenvio.com.br',
       port: null,
       path: '/api/v2/me/shipment/calculate',
       headers: {
@@ -15,9 +15,30 @@ class MelhorEnvioController {
       },
     };
 
-    const { data } = req.body;
+    const data = {
+      from: {
+        postal_code: '13306192',
+      },
+      to: {
+        postal_code: '13308197',
+      },
+      package: {
+        height: '10',
+        width: '20',
+        length: '15',
+        weight: '1',
+      },
+    };
+
+    // eslint-disable-next-line eqeqeq
+    // if (data == null || data == undefined) {
+    //   return res.status(400).json({
+    //     error: '[Erro]: Não está sendo enviado os dados do corpo corretamente',
+    //   });
+    // }
 
     const getShipping = http.request(options, () => {
+      console.log(data);
       const chunks = [data];
 
       res.on('data', (chunk) => {
@@ -30,7 +51,13 @@ class MelhorEnvioController {
       });
     });
 
-    return res.send(getShipping);
+    if (getShipping == null || undefined) {
+      return res.status(400).json({
+        error: '[Erro]: Não foi possível buscar dados da API',
+      });
+    }
+
+    return res.json(getShipping);
   }
 }
 

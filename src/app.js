@@ -1,4 +1,5 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
@@ -25,6 +26,10 @@ class App {
       express.static(path.resolve(__dirname, '..', 'uploads')),
     );
 
+    this.server.use(express.urlencoded({
+      extended: true,
+    }));
+    this.server.use(bodyParser.urlencoded({ extended: true }));
     this.server.use(express.json());
   }
 
