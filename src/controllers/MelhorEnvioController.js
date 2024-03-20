@@ -4,6 +4,9 @@ import fetch from 'node-fetch';
 class MelhorEnvioController {
   async searchPostalCode(req, res) {
     const url = 'https://melhorenvio.com.br/api/v2/me/shipment/calculate';
+
+    const postalCode = JSON.stringify(req.params);
+
     const options = {
       method: 'POST',
       headers: {
@@ -14,7 +17,7 @@ class MelhorEnvioController {
       },
       body: JSON.stringify({
         from: { postal_code: '13306192' },
-        to: { postal_code: '13308197' },
+        to: { postal_code: postalCode },
         package: {
           height: 10, width: 20, length: 15, weight: 1,
         },
@@ -24,10 +27,7 @@ class MelhorEnvioController {
     fetch(url, options)
       // eslint-disable-next-line no-shadow
       .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-        return res.json({ data: json });
-      })
+      .then((json) => res.json({ data: json }))
       .catch((err) => console.error(`error:${err}`));
   }
 }

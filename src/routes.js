@@ -28,6 +28,6 @@ routes.put('/products/:product_id', upload.single('image_url'), authMiddleware, 
 routes.delete('/products', authMiddleware, ProductsController.destroy);
 routes.post('/cart', authMiddleware, CartController.addCartProduct);
 
-routes.post('/melhor-envio', MelhorEnvioController.searchPostalCode);
+routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
 
 export default routes;
