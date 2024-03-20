@@ -1,5 +1,5 @@
+import bodyparser from 'body-parser';
 import express from 'express';
-import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
@@ -20,17 +20,13 @@ class App {
 
   middlewares() {
     this.server.use(cors());
+    this.server.use(bodyparser.urlencoded({ extended: true }));
+    this.server.use(bodyparser.json());
 
     this.server.use(
       '/files',
       express.static(path.resolve(__dirname, '..', 'uploads')),
     );
-
-    this.server.use(express.urlencoded({
-      extended: true,
-    }));
-    this.server.use(bodyParser.urlencoded({ extended: true }));
-    this.server.use(express.json());
   }
 
   routes() {
