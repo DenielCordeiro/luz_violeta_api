@@ -8,6 +8,8 @@ const UserSchema = new Schema({
   cellphone: String,
   password: String,
   postalCode: String,
+  state: String,
+  city: String,
   street: String,
   neighborhood: String,
   houseNumber: Number,
