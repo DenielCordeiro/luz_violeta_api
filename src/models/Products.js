@@ -8,7 +8,7 @@ const ProductsSchema = new Schema({
   name: String,
   description: String,
   groups: String,
-  image: String,
+  image: {},
 }, {
   toJSON: {
     virtuals: true,
@@ -16,7 +16,7 @@ const ProductsSchema = new Schema({
 });
 
 // eslint-disable-next-line func-names
-ProductsSchema.virtual('image_url').get(function () {
+ProductsSchema.virtual('file').get(function () {
   return `http://localhost:3333/files/${this.image}`;
 });
 

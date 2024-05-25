@@ -1,8 +1,8 @@
-import bodyparser from 'body-parser';
+/* eslint-disable import/no-extraneous-dependencies */
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import path from 'path';
+import morgan from 'morgan';
 import routes from './routes';
 
 class App {
@@ -20,13 +20,9 @@ class App {
 
   middlewares() {
     this.server.use(cors());
-    this.server.use(bodyparser.urlencoded({ extended: true }));
-    this.server.use(bodyparser.json());
-
-    this.server.use(
-      '/files',
-      express.static(path.resolve(__dirname, '..', 'uploads')),
-    );
+    this.server.use(express.json());
+    this.server.use(express.urlencoded({ extended: true }));
+    this.server.use(morgan('dev'));
   }
 
   routes() {
