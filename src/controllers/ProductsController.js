@@ -26,8 +26,6 @@ class ProductsController {
       groups: Yup.string(),
     });
 
-    const filename = req.file;
-
     const {
       type,
       valor,
@@ -35,6 +33,13 @@ class ProductsController {
       description,
       groups,
     } = req.body;
+
+    const {
+      originalname: nameImage,
+      size: sizeImage,
+      filename: keyImage,
+      firebaseUrl: urlImage,
+    } = req.file ? req.file : '';
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ erro: 'Falha na validação dos campos!' });
@@ -46,7 +51,12 @@ class ProductsController {
       name,
       description,
       groups,
-      image: filename,
+      image: {
+        name: nameImage,
+        size: sizeImage,
+        key: keyImage,
+        url: urlImage,
+      },
     });
 
     return res.json(product);

@@ -8,16 +8,16 @@ const ProductsSchema = new Schema({
   name: String,
   description: String,
   groups: String,
-  image: {},
-}, {
-  toJSON: {
-    virtuals: true,
+  image: {
+    name: String,
+    size: Number,
+    key: String,
+    url: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-});
-
-// eslint-disable-next-line func-names
-ProductsSchema.virtual('file').get(function () {
-  return `http://localhost:3333/files/${this.image}`;
 });
 
 export default model('Products', ProductsSchema);
