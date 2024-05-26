@@ -2,7 +2,7 @@
 import admin, { storage } from 'firebase-admin';
 import serviceAccount from '../config/firebase-key.json';
 
-const urlArchivesFirebase = 'gs://luz-violeta-186d5.appspot.com';
+const urlArchivesFirebase = 'luz-violeta-186d5.appspot.com';
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
