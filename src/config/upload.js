@@ -1,13 +1,8 @@
 import multer from 'multer';
 import crypto from 'crypto';
-import path from 'path';
 
 export default {
-  dest: path.resolve(__dirname, '..', '..', 'uploads'),
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.resolve(__dirname, '..', '..', 'uploads'));
-    },
+  storage: multer.memoryStorage({
     filename: (req, file, cb) => {
       crypto.randomBytes(16, (err, hash) => {
         if (err) {
@@ -21,7 +16,7 @@ export default {
     },
   }),
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 6 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     const allowedMimes = [
