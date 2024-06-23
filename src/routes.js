@@ -25,7 +25,7 @@ routes.delete('/profile', authMiddleware, ProfileController.destroy);
 
 routes.get('/products', ProductsController.index);
 routes.get('/products/:product_id', ProductsController.indexProduct);
-routes.post('/products', upload.single('file'), uploadImage, authMiddleware, ProductsController.store);
+routes.post('/products', upload.single('file'), uploadImage, ProductsController.store);
 routes.put('/products/:product_id', upload.single('file'), authMiddleware, ProductsController.update);
 routes.delete('/products', authMiddleware, ProductsController.destroy);
 routes.post('/cart', authMiddleware, CartController.addCartProduct);
