@@ -8,7 +8,7 @@ const ProductsSchema = new Schema({
   name: String,
   description: String,
   groups: String,
-  image: {
+  file: {
     name: String,
     size: Number,
     key: String,

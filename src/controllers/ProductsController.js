@@ -51,7 +51,7 @@ class ProductsController {
       name,
       description,
       groups,
-      image: {
+      file: {
         name: nameImage,
         size: sizeImage,
         key: keyImage,
