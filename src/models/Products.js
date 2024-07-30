@@ -18,6 +18,10 @@ const ProductsSchema = new Schema({
       default: Date.now,
     },
   },
+  shipping: {
+    name: String,
+    price: Number,
+  },
 });
 
 export default model('Products', ProductsSchema);
