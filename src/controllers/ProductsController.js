@@ -64,14 +64,12 @@ class ProductsController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      type: Yup.string(),
-      valor: Yup.number(),
+      type: Yup.string().required(),
+      valor: Yup.number().required(),
       name: Yup.string(),
       description: Yup.string(),
       groups: Yup.string(),
     });
-
-    const { filename } = req.file;
 
     const {
       type,
@@ -79,23 +77,36 @@ class ProductsController {
       name,
       description,
       groups,
-      product_id,
     } = req.body;
 
+    const {
+      originalname: nameImage,
+      size: sizeImage,
+      filename: keyImage,
+      firebaseUrl: urlImage,
+    } = req.file ? req.file : '';
+
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação dos campos!' });
+      return res.status(400).json({ erro: 'Falha na validação dos campos!' });
     }
 
-    await Products.updateOne({ _id: product_id }, {
+    const { product_id } = req.params;
+
+    const product = await Products.updateOne({ _id: product_id }, {
       type,
       valor,
       name,
       description,
       groups,
-      image: filename,
+      file: {
+        name: nameImage,
+        size: sizeImage,
+        key: keyImage,
+        url: urlImage,
+      },
     });
 
-    return res.send();
+    return res.json(product);
   }
 
   async destroy(req, res) {
