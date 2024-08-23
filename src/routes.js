@@ -29,7 +29,7 @@ routes.get('/products', ProductsController.index);
 routes.get('/products/:product_id', ProductsController.indexProduct);
 routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.store);
 routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.update);
-routes.delete('/products', configMulter.single('file'), uploadImage, ProductsController.destroy);
+routes.delete('/products/:product_id', ProductsController.destroy);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
 

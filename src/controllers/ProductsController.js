@@ -59,7 +59,7 @@ class ProductsController {
       },
     });
 
-    return res.json(product);
+    return res.json({ data: product });
   }
 
   async update(req, res) {
@@ -106,14 +106,21 @@ class ProductsController {
       },
     });
 
-    return res.json(product);
+    return res.json({ data: product });
   }
 
   async destroy(req, res) {
-    const { product_id } = req.body;
-    await Products.findByIdAndDelete({ _id: product_id });
+    const { product_id } = req.params;
+    const result = await Products.findByIdAndDelete({ _id: product_id });
 
-    return res.send();
+    if (!result) {
+      const error = 'Não foi possível excluir Produto';
+      return res.json({ data: error });
+    }
+
+    const data = { delete: true };
+
+    return res.json(data);
   }
 }
 
