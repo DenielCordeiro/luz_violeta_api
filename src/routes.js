@@ -8,6 +8,7 @@ import SessionController from './controllers/SessionController';
 import ProfileController from './controllers/ProfileController';
 import ProductsController from './controllers/ProductsController';
 import MelhorEnvioController from './controllers/MelhorEnvioController';
+import CartController from './controllers/CartController';
 import uploadImage from './services/firebase';
 
 const routes = new Router();
@@ -30,6 +31,10 @@ routes.get('/products/:product_id', ProductsController.indexProduct);
 routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.store);
 routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.update);
 routes.delete('/products/:product_id', ProductsController.destroy);
+
+routes.put('/save_cart', CartController.addCartProduct);
+routes.put('/clear_cart', CartController.clearCart);
+routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
 

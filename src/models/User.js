@@ -13,6 +13,7 @@ const UserSchema = new Schema({
   street: String,
   neighborhood: String,
   houseNumber: Number,
+  productCart: {},
 });
 
 export default model('User', UserSchema);
