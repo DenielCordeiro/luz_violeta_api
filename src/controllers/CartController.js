@@ -6,7 +6,7 @@ class CartController {
     const { user_id, product } = req.body;
 
     const userUpdated = await User.findByIdAndUpdate(user_id, {
-      productCart: product,
+      productsCart: product,
     });
 
     return res.json(userUpdated);

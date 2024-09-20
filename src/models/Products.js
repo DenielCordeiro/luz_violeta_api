@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const ProductsSchema = new Schema({
   id: Number,
-  userId: Number,
   type: String,
   valor: Number,
   name: String,
@@ -22,6 +21,10 @@ const ProductsSchema = new Schema({
     name: String,
     postalCode: Number,
     price: Number,
+  },
+  sale: {
+    sold: Boolean,
+    userId: Number,
   },
 });
 
