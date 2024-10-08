@@ -15,7 +15,7 @@ class ProfileController {
     const { user_id } = req.params;
     const profile = await User.findById(user_id);
 
-    return res.json({ profile });
+    return res.json({ data: profile });
   }
 
   async store(req, res) {
