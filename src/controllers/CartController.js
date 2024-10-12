@@ -3,24 +3,25 @@ import User from '../models/User';
 
 class CartController {
   async addCartProduct(req, res) {
-    const { user_id, product } = req.body;
+    const { products } = req.body;
+    const { user_id } = req.params;
 
     const userUpdated = await User.findByIdAndUpdate(user_id, {
-      productsCart: product,
+      productsCart: products,
     });
 
     return res.json(userUpdated);
   }
 
   async clearCart(req, res) {
-    const { user_id } = req.body;
+    const { user_id } = req.params;
     const product = {};
 
     const userUpdated = await User.findByIdAndUpdate(user_id, {
-      productCart: product,
+      productsCart: product,
     });
 
-    return res.json(userUpdated);
+    return res.json({ data: userUpdated });
   }
 
   async buyProduct(req, res) {

@@ -32,8 +32,8 @@ routes.post('/products', configMulter.single('file'), uploadImage, ProductsContr
 routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.update);
 routes.delete('/products/:product_id', ProductsController.destroy);
 
-routes.put('/save_cart', CartController.addCartProduct);
-routes.put('/clear_cart', CartController.clearCart);
+routes.put('/save_cart/:user_id', CartController.addCartProduct);
+routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
