@@ -4,12 +4,14 @@ import multer from 'multer';
 // eslint-disable-next-line import/extensions
 import authMiddleware from './middlewares/auth';
 
+import uploadImage from './services/firebase';
+
 import SessionController from './controllers/SessionController';
 import ProfileController from './controllers/ProfileController';
 import ProductsController from './controllers/ProductsController';
 import MelhorEnvioController from './controllers/MelhorEnvioController';
 import CartController from './controllers/CartController';
-import uploadImage from './services/firebase';
+import NewsletterController from './controllers/NewsletterController';
 
 const routes = new Router();
 
@@ -37,5 +39,7 @@ routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
+
+routes.put('/newsletter/news', NewsletterController.news);
 
 export default routes;
