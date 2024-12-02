@@ -15,7 +15,13 @@ class App {
 
   async connectionDB() {
     const uri = 'mongodb+srv://luzvioleta:violeta@luzvioleta.h2xeiso.mongodb.net/luzvioleta';
-    const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+    const clientOptions = {
+      serverApi: {
+        version: '1',
+        strict: true,
+        deprecationErrors: true,
+      },
+    };
 
     try {
       await mongoose.connect(uri, clientOptions, {
@@ -23,7 +29,7 @@ class App {
         useUnifiedTopology: true,
       });
     } catch (erro) {
-      // eslint-disable-next-line no-console
+      /* eslint-disable-next-line no-console */
       console.log(erro);
     }
   }
