@@ -1,32 +1,53 @@
-import Newsletter from '../models/Newsletter';
+import * as Yup from 'yup';
+import News from '../models/News';
 
 class NewsletterControlle {
-  async news(req, res) {
+  async index(req, res) {
+    return res.json({ ok: true });
+  }
+
+  async store(req, res) {
+    const schema = Yup.object().shape({
+      type: Yup.string().required(),
+      linkProduct: Yup.string(),
+    });
+
     const {
-      firstImage: {
-        firstImageUrl,
-        firstProductId,
-      },
-      secondImage: {
-        secondImageUrl,
-        secondProductId,
-      },
+      type,
+      linkProduct,
     } = req.body;
 
-    const news = await Newsletter.updateOne({
-      news: {
-        firstImage: {
-          image: firstImageUrl,
-          productId: firstProductId,
-        },
-        secondImage: {
-          image: secondImageUrl,
-          productId: secondProductId,
-        },
+    const {
+      originalname: nameImage,
+      size: sizeImage,
+      filename: keyImage,
+      firebaseUrl: urlImage,
+    } = req.file ? req.file : '';
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ erro: 'Falha na validação dos campos!' });
+    }
+
+    const news = await News.create({
+      type,
+      linkProduct,
+      file: {
+        name: nameImage,
+        size: sizeImage,
+        key: keyImage,
+        url: urlImage,
       },
     });
 
-    return res.json(news);
+    return res.json({ data: news });
+  }
+
+  async update(req, res) {
+    return res.json({ ok: true });
+  }
+
+  async destroy(req, res) {
+    return res.json({ ok: true });
   }
 }
 

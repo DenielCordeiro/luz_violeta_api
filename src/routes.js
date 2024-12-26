@@ -28,6 +28,11 @@ routes.post('/profile', ProfileController.store);
 routes.put('/profile/:user_id', authMiddleware, ProfileController.update);
 routes.delete('/profile', authMiddleware, ProfileController.destroy);
 
+routes.get('/newsletter', NewsletterController.index);
+routes.post('/newsletter', configMulter.single('file'), uploadImage, NewsletterController.store);
+routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, NewsletterController.update);
+routes.delete('/newsletter/:news_id', NewsletterController.destroy);
+
 routes.get('/products', ProductsController.index);
 routes.get('/products/:product_id', ProductsController.indexProduct);
 routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.store);
@@ -39,7 +44,5 @@ routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
-
-routes.put('/newsletter/news', NewsletterController.news);
 
 export default routes;
