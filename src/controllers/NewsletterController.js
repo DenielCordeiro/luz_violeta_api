@@ -84,7 +84,7 @@ class NewsletterControlle {
     }
 
     try {
-      await News.updateOne({ _id: news_id }, {
+      const news = await News.updateOne({ _id: news_id }, {
         type,
         linkProduct,
         file: {
@@ -95,7 +95,7 @@ class NewsletterControlle {
         },
       });
 
-      return res.send();
+      return res.json({ data: news });
     } catch (error) {
       return res.status(400).json({
         fail: 'Não foi possível atualizar a dados da imagem!',
