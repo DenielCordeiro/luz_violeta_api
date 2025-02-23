@@ -4,21 +4,21 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User';
 
 class ProfileController {
-  async index(req, res) {
+  async getUsers(req, res) {
     const { allProfiles } = req.params;
     const profiles = await User.find({ allProfiles });
 
     return res.json(profiles);
   }
 
-  async indexProfile(req, res) {
+  async getUser(req, res) {
     const { user_id } = req.params;
     const profile = await User.findById(user_id);
 
     return res.json({ data: profile });
   }
 
-  async store(req, res) {
+  async createUser(req, res) {
     const schema = Yup.object().shape({
       email: Yup.string().email().required(),
       password: Yup.string().required(),
@@ -68,7 +68,7 @@ class ProfileController {
     return res.json(profiles);
   }
 
-  async update(req, res) {
+  async updateUser(req, res) {
     const schema = Yup.object().shape({
       email: Yup.string().email(),
       password: Yup.string(),
@@ -120,7 +120,7 @@ class ProfileController {
     return res.send();
   }
 
-  async destroy(req, res) {
+  async deleteUser(req, res) {
     const { user_id } = req.params;
 
     await User.findByIdAndDelete({ _id: user_id });

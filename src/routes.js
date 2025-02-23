@@ -21,29 +21,29 @@ const configMulter = multer({
   limits: 6 * 1024 * 1024,
 });
 
-routes.get('/session/:email/:password', SessionController.store);
+routes.get('/session/:email/:password', SessionController.login);
 
-routes.get('/profile', authMiddleware, ProfileController.index);
-routes.get('/profile/:user_id', ProfileController.indexProfile);
-routes.post('/profile', ProfileController.store);
-routes.put('/profile/:user_id', authMiddleware, ProfileController.update);
-routes.delete('/profile', authMiddleware, ProfileController.destroy);
+routes.get('/profile', authMiddleware, ProfileController.getUsers);
+routes.get('/profile/:user_id', ProfileController.getUser);
+routes.post('/profile', ProfileController.createUser);
+routes.put('/profile/:user_id', authMiddleware, ProfileController.updateUser);
+routes.delete('/profile', authMiddleware, ProfileController.deleteUser);
 
-routes.get('/newsletter', ImagesOfNewsletterController.index);
-routes.post('/newsletter', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.store);
-routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.update);
-routes.delete('/newsletter/:news_id', ImagesOfNewsletterController.destroy);
+routes.get('/newsletter', ImagesOfNewsletterController.getImages);
+routes.post('/newsletter', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.createImage);
+routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.updateImage);
+routes.delete('/newsletter/:news_id', ImagesOfNewsletterController.deleteImage);
 
 routes.get('/review', ReviewController.getReviews);
 routes.post('/review', ReviewController.createReview);
 routes.put('/review', ReviewController.updateReview);
 routes.delete('/review', ReviewController.deleteReview);
 
-routes.get('/products', ProductsController.index);
-routes.get('/products/:product_id', ProductsController.indexProduct);
-routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.store);
-routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.update);
-routes.delete('/products/:product_id', ProductsController.destroy);
+routes.get('/products', ProductsController.getProducts);
+routes.get('/products/:product_id', ProductsController.getProduct);
+routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.createProduct);
+routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.updateProduct);
+routes.delete('/products/:product_id', ProductsController.deleteProduct);
 
 routes.put('/save_cart/:user_id', CartController.addCartProduct);
 routes.put('/clear_cart/:user_id', CartController.clearCart);

@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import News from '../models/News';
 
 class ImagesOfNewsletterController {
-  async index(req, res) {
+  async getImages(req, res) {
     const { allNews } = req.params;
 
     try {
@@ -16,7 +16,7 @@ class ImagesOfNewsletterController {
     }
   }
 
-  async store(req, res) {
+  async createImage(req, res) {
     const schema = Yup.object().shape({
       type: Yup.string().required(),
       linkProduct: Yup.string(),
@@ -59,7 +59,7 @@ class ImagesOfNewsletterController {
     }
   }
 
-  async update(req, res) {
+  async updateImage(req, res) {
     const schema = Yup.object().shape({
       type: Yup.string().required(),
       linkProduct: Yup.string(),
@@ -104,7 +104,7 @@ class ImagesOfNewsletterController {
     }
   }
 
-  async destroy(req, res) {
+  async deleteImage(req, res) {
     const { news_id } = req.params;
 
     if (news_id === null || news_id === undefined) {
