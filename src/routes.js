@@ -8,10 +8,11 @@ import uploadImage from './services/firebase';
 
 import SessionController from './controllers/SessionController';
 import ProfileController from './controllers/ProfileController';
+import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController';
+import ReviewController from './controllers/ReviewController';
 import ProductsController from './controllers/ProductsController';
 import MelhorEnvioController from './controllers/MelhorEnvioController';
 import CartController from './controllers/CartController';
-import NewsletterController from './controllers/NewsletterController';
 
 const routes = new Router();
 
@@ -28,10 +29,15 @@ routes.post('/profile', ProfileController.store);
 routes.put('/profile/:user_id', authMiddleware, ProfileController.update);
 routes.delete('/profile', authMiddleware, ProfileController.destroy);
 
-routes.get('/newsletter', NewsletterController.index);
-routes.post('/newsletter', configMulter.single('file'), uploadImage, NewsletterController.store);
-routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, NewsletterController.update);
-routes.delete('/newsletter/:news_id', NewsletterController.destroy);
+routes.get('/newsletter', ImagesOfNewsletterController.index);
+routes.post('/newsletter', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.store);
+routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.update);
+routes.delete('/newsletter/:news_id', ImagesOfNewsletterController.destroy);
+
+routes.get('/review', ReviewController.getReviews);
+routes.post('/review', ReviewController.createReview);
+routes.put('/review', ReviewController.updateReview);
+routes.delete('/review', ReviewController.deleteReview);
 
 routes.get('/products', ProductsController.index);
 routes.get('/products/:product_id', ProductsController.indexProduct);

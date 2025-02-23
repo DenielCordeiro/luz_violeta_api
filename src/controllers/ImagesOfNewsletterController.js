@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import News from '../models/News';
 
-class NewsletterControlle {
+class ImagesOfNewsletterController {
   async index(req, res) {
     const { allNews } = req.params;
 
@@ -9,7 +9,7 @@ class NewsletterControlle {
       const data = await News.find({ allNews });
       return res.json({ data });
     } catch (error) {
-      return res.status(400).json({
+      return res.status(500).json({
         fail: 'Não foi possível buscar todas as imagens!',
         messageError: error,
       });
@@ -52,7 +52,7 @@ class NewsletterControlle {
 
       return res.json({ data: news });
     } catch (error) {
-      return res.status(400).json({
+      return res.status(500).json({
         fail: 'Não foi possivel criar uma nova imagem!',
         messageError: error,
       });
@@ -97,7 +97,7 @@ class NewsletterControlle {
 
       return res.json({ data: news });
     } catch (error) {
-      return res.status(400).json({
+      return res.status(500).json({
         fail: 'Não foi possível atualizar a dados da imagem!',
         messageError: error,
       });
@@ -108,7 +108,7 @@ class NewsletterControlle {
     const { news_id } = req.params;
 
     if (news_id === null || news_id === undefined) {
-      return res.status(400).json({ error: 'Não foi possível encontrar o id da imagem!' });
+      return res.status(500).json({ error: 'Não foi possível encontrar o id da imagem!' });
     }
 
     try {
@@ -116,7 +116,7 @@ class NewsletterControlle {
 
       return res.json({ result });
     } catch (error) {
-      return res.status(400).json({
+      return res.status(500).json({
         fail: 'Não foi possível deletar a imagem!',
         messageError: error,
       });
@@ -124,4 +124,4 @@ class NewsletterControlle {
   }
 }
 
-export default new NewsletterControlle();
+export default new ImagesOfNewsletterController();
