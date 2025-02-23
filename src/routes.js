@@ -34,10 +34,10 @@ routes.post('/newsletter', configMulter.single('file'), uploadImage, ImagesOfNew
 routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.updateImage);
 routes.delete('/newsletter/:news_id', ImagesOfNewsletterController.deleteImage);
 
-routes.get('/review', ReviewController.getReviews);
-routes.post('/review', ReviewController.createReview);
-routes.put('/review', ReviewController.updateReview);
-routes.delete('/review', ReviewController.deleteReview);
+routes.get('/newsletter/review', ReviewController.getReviews);
+routes.post('/newsletter/review', ReviewController.createReview);
+routes.put('/newsletter/review/:review_id', ReviewController.updateReview);
+routes.delete('/newsletter/review/:review_id', ReviewController.deleteReview);
 
 routes.get('/products', ProductsController.getProducts);
 routes.get('/products/:product_id', ProductsController.getProduct);

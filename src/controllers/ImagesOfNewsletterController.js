@@ -19,7 +19,7 @@ class ImagesOfNewsletterController {
   async createImage(req, res) {
     const schema = Yup.object().shape({
       type: Yup.string().required(),
-      linkProduct: Yup.string(),
+      linkProduct: Yup.string().required(),
     });
 
     const {

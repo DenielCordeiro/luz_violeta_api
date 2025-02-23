@@ -14,23 +14,24 @@ class App {
   }
 
   async connectionDB() {
-    const uri = 'mongodb+srv://luzvioleta:violeta@luzvioleta.h2xeiso.mongodb.net/luzvioleta';
-    const clientOptions = {
-      serverApi: {
-        version: '1',
-        strict: true,
-        deprecationErrors: true,
-      },
-    };
-
     try {
+      const uri = 'mongodb+srv://luzvioleta:violeta@luzvioleta.h2xeiso.mongodb.net/luzvioleta';
+      const clientOptions = {
+        serverApi: {
+          version: '1',
+          strict: true,
+          deprecationErrors: true,
+        },
+      };
+
       await mongoose.connect(uri, clientOptions, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
-    } catch (erro) {
+    } catch (error) {
       /* eslint-disable-next-line no-console */
-      console.log(erro);
+      console.log('Não foi possível estabelecer conxão do backend com o MongoDB');
+      console.log(error);
     }
   }
 

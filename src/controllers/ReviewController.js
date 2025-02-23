@@ -19,17 +19,15 @@ class ReviewController {
 
   async createReview(req, res) {
     const schema = Yup.object().shape({
-      userName: Yup.string().required,
-      review: Yup.string().required,
-      date: Yup.number().required,
-      stars: Yup.number().required,
-      filledStars: Yup.number().required,
+      userName: Yup.string().required(),
+      review: Yup.string().required(),
+      stars: Yup.number().required(),
+      filledStars: Yup.number().required(),
     });
 
     const {
       userName,
       review,
-      date,
       stars,
       filledStars,
     } = req.body;
@@ -42,12 +40,11 @@ class ReviewController {
       const data = await Review.create({
         userName,
         review,
-        date,
         stars,
         filledStars,
       });
 
-      return res.status(200).json(data);
+      return res.status(200).json({ data });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível salvar nova avaliação no banco de dados!',
@@ -58,17 +55,15 @@ class ReviewController {
 
   async updateReview(req, res) {
     const schema = Yup.object().shape({
-      userName: Yup.string().required,
-      review: Yup.string().required,
-      date: Yup.number().required,
-      stars: Yup.number().required,
-      filledStars: Yup.number().required,
+      userName: Yup.string().required(),
+      review: Yup.string().required(),
+      stars: Yup.number().required(),
+      filledStars: Yup.number().required(),
     });
 
     const {
       userName,
       review,
-      date,
       stars,
       filledStars,
     } = req.body;
@@ -87,12 +82,11 @@ class ReviewController {
       const data = await Review.updateOne({ _id: review_id }, {
         userName,
         review,
-        date,
         stars,
         filledStars,
       });
 
-      return res.status(200).json(data);
+      return res.status(200).json({ data });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível atualizar avaliação no banco de dados!',
@@ -111,7 +105,7 @@ class ReviewController {
     try {
       const data = await Review.findByIdAndDelete({ _id: review_id });
 
-      return res.status(200).json(data);
+      return res.status(200).json({ data });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível excluir avaliação do banco de dados!',
