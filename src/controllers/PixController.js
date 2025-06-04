@@ -4,6 +4,7 @@ import https from 'https';
 import axios from 'axios';
 
 class PixController {
+  // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
     try {
       // Para não acessar o dotend em produção
@@ -35,9 +36,35 @@ class PixController {
         },
         httpsAgent: agent,
         data: { grant_type: 'client_credentials' },
-      }).then((response) => console.log(response.data));
+      }).then((response) => {
+        const accessToken = response.data.access_token;
 
-      return res.send();
+        const reqGN = axios.create({
+          baseURL: process.env.GN_ENDPOINT,
+          httpsAgent: agent,
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const dataCob = {
+          calendario: {
+            expiracao: 3600,
+          },
+          valor: {
+            original: '44.00',
+          },
+          chave: '43.488.029/0001-77',
+          solicitacaoPagador: 'Cobrança dos serviços prestados.',
+        };
+
+        reqGN.post('/v2/cob', dataCob).then((result) => {
+          res.send(result.data);
+        });
+
+        return true;
+      });
     } catch (error) {
       console.error('Erro ao obter o token:', error.response ? error.response.data : error.message);
       return res.status(500).json({ error: 'Erro ao obter o token' });
