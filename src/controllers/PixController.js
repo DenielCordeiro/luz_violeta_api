@@ -27,7 +27,7 @@ class PixController {
       const credentials = Buffer.from(`${process.env.GN_CLIENT_ID}:${process.env.GN_CLIENT_SECRET}`).toString('base64');
 
       // Enviar requisição por AXIOS
-      axios({
+      const authResponse = await axios({
         method: 'POST',
         url: `${process.env.GN_ENDPOINT}/oauth/token`,
         headers: {
@@ -36,35 +36,40 @@ class PixController {
         },
         httpsAgent: agent,
         data: { grant_type: 'client_credentials' },
-      }).then((response) => {
-        const accessToken = response.data.access_token;
-
-        const reqGN = axios.create({
-          baseURL: process.env.GN_ENDPOINT,
-          httpsAgent: agent,
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const dataCob = {
-          calendario: {
-            expiracao: 3600,
-          },
-          valor: {
-            original: '44.00',
-          },
-          chave: '43.488.029/0001-77',
-          solicitacaoPagador: 'Cobrança dos serviços prestados.',
-        };
-
-        reqGN.post('/v2/cob', dataCob).then((result) => {
-          res.send(result.data);
-        });
-
-        return true;
       });
+
+      const accessToken = authResponse.data.access_token;
+
+      // padronizando requisições com axios
+      const reqGN = axios.create({
+        baseURL: process.env.GN_ENDPOINT,
+        httpsAgent: agent,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // cobrança com dados fake
+      const dataCob = {
+        calendario: {
+          expiracao: 3600,
+        },
+        valor: {
+          original: '44.00',
+        },
+        chave: '43.488.029/0001-77',
+        solicitacaoPagador: 'Cobrança dos serviços prestados.',
+      };
+
+      // enviando dados da cobrança para o front-end com axios
+      const cobResponse = await reqGN.post('/v2/cob', dataCob);
+
+      // res.send(cobResponse.data);
+
+      const qrcodeRespose = await reqGN.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
+
+      res.send(qrcodeRespose.data);
     } catch (error) {
       console.error('Erro ao obter o token:', error.response ? error.response.data : error.message);
       return res.status(500).json({ error: 'Erro ao obter o token' });
