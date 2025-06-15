@@ -22,10 +22,12 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-unused-vars': 'off',
+    'global-require': 'off',
     'class-methods-use-this': 'off',
     'no-param-reassign': 'off',
     camelcase: 'off',
     'no-underscore-dangle': 'off',
-    'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
+    // 'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
   },
 };

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-// eslint-disable-next-line import/extensions
 import authMiddleware from './middlewares/auth';
 
 import uploadImage from './services/firebase';
@@ -11,8 +10,9 @@ import ProfileController from './controllers/ProfileController';
 import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController';
 import ReviewController from './controllers/ReviewController';
 import ProductsController from './controllers/ProductsController';
-import MelhorEnvioController from './controllers/MelhorEnvioController';
 import CartController from './controllers/CartController';
+import MelhorEnvioController from './controllers/MelhorEnvioController';
+import PixController from './controllers/PixController';
 
 const routes = new Router();
 
@@ -50,5 +50,6 @@ routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
+routes.get('/pix', PixController.getPIX);
 
 export default routes;
