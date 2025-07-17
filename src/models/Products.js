@@ -1,10 +1,10 @@
 import { Schema, model } from 'mongoose';
 
 const ProductsSchema = new Schema({
-  type: String,
-  valor: Number,
   name: String,
   description: String,
+  valor: Number,
+  type: String,
   groups: String,
   file: {
     name: String,
@@ -15,15 +15,6 @@ const ProductsSchema = new Schema({
       type: Date,
       default: Date.now,
     },
-  },
-  shipping: {
-    name: String,
-    postalCode: Number,
-    price: Number,
-  },
-  sale: {
-    sold: Boolean,
-    userId: Number,
   },
 });
 
