@@ -21,7 +21,7 @@ const configMulter = multer({
   limits: 6 * 1024 * 1024,
 });
 
-routes.get('/session/:email/:password', SessionController.login);
+routes.get('/session', SessionController.login);
 
 routes.get('/profile', authMiddleware, ProfileController.getUsers);
 routes.get('/profile/:user_id', ProfileController.getUser);
