@@ -7,6 +7,8 @@ class PixController {
   // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
     try {
+      const { valor, key } = req.body;
+
       // Para não acessar o dotend em produção
       if (process.env.NODE_ENV !== 'production') {
         require('dotenv').config();
@@ -56,9 +58,9 @@ class PixController {
           expiracao: 3600,
         },
         valor: {
-          original: '44.00',
+          original: valor,
         },
-        chave: '43.488.029/0001-77',
+        chave: key,
         solicitacaoPagador: 'Cobrança dos serviços prestados.',
       };
 
@@ -66,10 +68,9 @@ class PixController {
       const cobResponse = await reqGN.post('/v2/cob', dataCob);
 
       // res.send(cobResponse.data);
-
       const qrcodeRespose = await reqGN.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
 
-      res.send(qrcodeRespose.data);
+      res.json({ data: qrcodeRespose.data.imagemQrcode });
     } catch (error) {
       console.error('Erro ao obter o token:', error.response ? error.response.data : error.message);
       return res.status(500).json({ error: 'Erro ao obter o token' });

@@ -21,7 +21,7 @@ const configMulter = multer({
   limits: 6 * 1024 * 1024,
 });
 
-routes.get('/session/:email/:password', SessionController.login);
+routes.post('/session', SessionController.login);
 
 routes.get('/profile', authMiddleware, ProfileController.getUsers);
 routes.get('/profile/:user_id', ProfileController.getUser);
@@ -50,6 +50,6 @@ routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
-routes.get('/pix', PixController.getPIX);
+routes.post('/payments/pix', PixController.getPIX);
 
 export default routes;

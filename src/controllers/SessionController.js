@@ -8,7 +8,7 @@ import authConfig from '../config/auth';
 
 class SessionController {
   async login(req, res) {
-    const { email, password } = req.params;
+    const { email, password } = req.body;
     let adm = false;
 
     if (email === 'camila.luzvioleta@gmail.com') {
@@ -22,7 +22,7 @@ class SessionController {
       password: Yup.string().required(),
     });
 
-    if (!(await schema.isValid(req.params))) {
+    if (!(await schema.isValid(req.body))) {
       return res.status(400).json({
         error: '[Falha na validação]: E-mail ou Senha incorretos.',
       });
@@ -34,32 +34,49 @@ class SessionController {
       return res.status(401).json({ error: 'E-mail não existe.' });
     }
 
-    const userPassword = await user.password;
-    const user_id = await user._id;
+    const userPassword = user.password;
 
     const bool = bcrypt.compareSync(password, userPassword);
 
-    if (!(await bool)) {
+    if (!bool) {
       return res.status(401).json({ error: 'Senha incorreta.' });
     }
 
     const {
       id,
       name,
+      email: userEmail,
+      cellphone,
+      postalCode,
+      state,
+      city,
+      street,
+      neighborhood,
+      houseNumber,
+      productsCart,
     } = user;
 
-    return res.json({
+    const profile = {
       user: {
-        user_id,
+        id,
         name,
-        email,
+        email: userEmail,
+        cellphone,
+        postalCode,
+        state,
+        city,
+        street,
+        neighborhood,
+        houseNumber,
+        productsCart,
       },
       token: Jwt.sign({ id }, authConfig.secret, {
         expiresIn: authConfig.expiresIn,
       }),
       administrator: adm,
-      user_id,
-    });
+    };
+
+    return res.json({ data: profile });
   }
 }
 
