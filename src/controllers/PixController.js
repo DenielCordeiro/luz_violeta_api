@@ -6,29 +6,31 @@ import axios from 'axios';
 class PixController {
   // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
+    const { valor } = req.body;
+    let accessToken = '';
+    let reqEFI = null;
+
+    // Para não acessar o dotend em produção
+    if (process.env.NODE_ENV !== 'production') {
+      require('dotenv').config();
+    }
+
+    // Carregando certificado em formato de Buffer
+    const cert = fs.readFileSync(
+      path.resolve(__dirname, `../../certs/${process.env.GN_CERT}`),
+    );
+
+    // Carregando pacote https com o certificado
+    const agent = new https.Agent({
+      pfx: cert,
+      passphrase: '',
+    });
+
+    // Criando credenciais
+    const credentials = Buffer.from(`${process.env.GN_CLIENT_ID}:${process.env.GN_CLIENT_SECRET}`).toString('base64');
+
+    // Enviar requisição por AXIOS
     try {
-      const { valor, key } = req.body;
-
-      // Para não acessar o dotend em produção
-      if (process.env.NODE_ENV !== 'production') {
-        require('dotenv').config();
-      }
-
-      // Carregando certificado em formato de Buffer
-      const cert = fs.readFileSync(
-        path.resolve(__dirname, `../../certs/${process.env.GN_CERT}`),
-      );
-
-      // Carregando pacote https com o certificado
-      const agent = new https.Agent({
-        pfx: cert,
-        passphrase: '',
-      });
-
-      // Criando credenciais
-      const credentials = Buffer.from(`${process.env.GN_CLIENT_ID}:${process.env.GN_CLIENT_SECRET}`).toString('base64');
-
-      // Enviar requisição por AXIOS
       const authResponse = await axios({
         method: 'POST',
         url: `${process.env.GN_ENDPOINT}/oauth/token`,
@@ -40,10 +42,15 @@ class PixController {
         data: { grant_type: 'client_credentials' },
       });
 
-      const accessToken = authResponse.data.access_token;
+      const token = authResponse.data.access_token;
+      accessToken = token;
+    } catch (error) {
+      return res.status(400).json(error, { error: 'Não foi possível gerar o token de acesso' });
+    }
 
-      // padronizando requisições com axios
-      const reqGN = axios.create({
+    // padronizando requisições com axios
+    try {
+      const efiAPI = axios.create({
         baseURL: process.env.GN_ENDPOINT,
         httpsAgent: agent,
         headers: {
@@ -52,29 +59,36 @@ class PixController {
         },
       });
 
-      // cobrança com dados fake
-      const dataCob = {
-        calendario: {
-          expiracao: 3600,
-        },
-        valor: {
-          original: valor,
-        },
-        chave: key,
-        solicitacaoPagador: 'Cobrança dos serviços prestados.',
-      };
-
-      // enviando dados da cobrança para o front-end com axios
-      const cobResponse = await reqGN.post('/v2/cob', dataCob);
-
-      // res.send(cobResponse.data);
-      const qrcodeRespose = await reqGN.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
-
-      res.json({ data: qrcodeRespose.data.imagemQrcode });
+      reqEFI = efiAPI;
     } catch (error) {
-      console.error('Erro ao obter o token:', error.response ? error.response.data : error.message);
-      return res.status(500).json({ error: 'Erro ao obter o token' });
+      return res.status(400).json(error, { error: 'Não foi possível conectar com a API do Gerencianet' });
     }
+
+    // cobrança com dados reais
+    const dataCob = {
+      calendario: {
+        expiracao: 3600,
+      },
+      valor: {
+        original: valor,
+      },
+      chave: '43.488.029/0001-77',
+      solicitacaoPagador: 'Cobrança dos serviços prestados.',
+    };
+
+    console.log('Dados para combrança: ', dataCob);
+
+    // enviando dados da cobrança para o front-end com axios
+    try {
+      const cobResponse = await reqEFI.post('/v2/cob', dataCob);
+    } catch (error) {
+      return res.status(400).json(error, { error: 'Não foi possível gerar a cobrança' });
+    }
+
+    // Gerar o QR Code
+    // const qrcodeRespose = await reqGN.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
+
+    // res.json({ data: qrcodeRespose.data.imagemQrcode });
   }
 }
 
