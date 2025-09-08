@@ -9,6 +9,8 @@ class PixController {
     const { valor } = req.body;
     let accessToken = '';
     let reqEFI = null;
+    let copyAndPaste = '';
+    let imageQrcode = '';
 
     // Para não acessar o dotend em produção
     if (process.env.NODE_ENV !== 'production') {
@@ -45,7 +47,7 @@ class PixController {
       const token = authResponse.data.access_token;
       accessToken = token;
     } catch (error) {
-      return res.status(400).json(error, { error: 'Não foi possível gerar o token de acesso' });
+      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar o token de acesso' });
     }
 
     // padronizando requisições com axios
@@ -61,7 +63,7 @@ class PixController {
 
       reqEFI = efiAPI;
     } catch (error) {
-      return res.status(400).json(error, { error: 'Não foi possível conectar com a API do Gerencianet' });
+      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível conectar com a API do Gerencianet' });
     }
 
     // cobrança com dados reais
@@ -69,26 +71,35 @@ class PixController {
       calendario: {
         expiracao: 3600,
       },
+      devedor: {
+        cpf: '12345678909',
+        nome: 'Francisco da Silva',
+      },
       valor: {
-        original: valor,
+        original: Number(valor).toFixed(2),
       },
       chave: '43.488.029/0001-77',
       solicitacaoPagador: 'Cobrança dos serviços prestados.',
     };
 
-    console.log('Dados para combrança: ', dataCob);
-
     // enviando dados da cobrança para o front-end com axios
     try {
       const cobResponse = await reqEFI.post('/v2/cob', dataCob);
+
+      copyAndPaste = cobResponse.data.pixCopiaECola;
+
+      const qrcodeRespose = await reqEFI.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
+
+      const data = {
+        qrcode: qrcodeRespose.data.qrcode,
+        imagemQrcode: `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeRespose.data.qrcode}&size=300x300&ecc=M`,
+        copyAndPaste,
+      };
+
+      res.json({ data });
     } catch (error) {
-      return res.status(400).json(error, { error: 'Não foi possível gerar a cobrança' });
+      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
     }
-
-    // Gerar o QR Code
-    // const qrcodeRespose = await reqGN.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
-
-    // res.json({ data: qrcodeRespose.data.imagemQrcode });
   }
 }
 
