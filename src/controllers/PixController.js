@@ -6,11 +6,10 @@ import axios from 'axios';
 class PixController {
   // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
-    const { valor } = req.body;
+    const { valor, cpf, name } = req.body;
     let accessToken = '';
     let reqEFI = null;
     let copyAndPaste = '';
-    let imageQrcode = '';
 
     // Para não acessar o dotend em produção
     if (process.env.NODE_ENV !== 'production') {
@@ -72,14 +71,14 @@ class PixController {
         expiracao: 3600,
       },
       devedor: {
-        cpf: '12345678909',
-        nome: 'Francisco da Silva',
+        cpf: cpf.replace(/\D/g, ''),
+        nome: name,
       },
       valor: {
         original: Number(valor).toFixed(2),
       },
       chave: '43.488.029/0001-77',
-      solicitacaoPagador: 'Cobrança dos serviços prestados.',
+      solicitacaoPagador: 'Cobrança de serviço artesanal prestado.',
     };
 
     // enviando dados da cobrança para o front-end com axios
