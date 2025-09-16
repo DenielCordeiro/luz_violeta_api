@@ -6,7 +6,7 @@ import axios from 'axios';
 class PixController {
   // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
-    const { valor, cpf, name } = req.body;
+    const { valor, profileCPF, name } = req.body;
     let accessToken = '';
     let reqEFI = null;
     let copyAndPaste = '';
@@ -71,7 +71,7 @@ class PixController {
         expiracao: 3600,
       },
       devedor: {
-        cpf: cpf.replace(/\D/g, ''),
+        cpf: profileCPF.replace(/\D/g, ''),
         nome: name,
       },
       valor: {
