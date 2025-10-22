@@ -9,7 +9,7 @@ class PixController {
     const { valor, profileCPF, name } = req.body;
     let accessToken = '';
     let reqEFI = null;
-    let copyAndPaste = '';
+    let copyQRCode = '';
 
     // Para não acessar o dotend em produção
     if (process.env.NODE_ENV !== 'production') {
@@ -65,13 +65,23 @@ class PixController {
       return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível conectar com a API do Gerencianet' });
     }
 
+    // validando parâmetros
+    if (!valor || !profileCPF || !name) {
+      return res.status(400).json({ error: 'Parâmetros inválidos', message: 'É necessário informar o valor, CPF e nome do pagador para gerar a cobrança' });
+    }
+
+    const cleanCPF = String(profileCPF).replace(/\D/g, '');
+    if (cleanCPF.length !== 11) {
+      return res.status(400).json({ error: 'CPF inválido' });
+    }
+
     // cobrança com dados reais
     const dataCob = {
       calendario: {
         expiracao: 3600,
       },
       devedor: {
-        cpf: profileCPF.replace(/\D/g, ''),
+        cpf: cleanCPF,
         nome: name,
       },
       valor: {
@@ -85,14 +95,14 @@ class PixController {
     try {
       const cobResponse = await reqEFI.post('/v2/cob', dataCob);
 
-      copyAndPaste = cobResponse.data.pixCopiaECola;
+      copyQRCode = cobResponse.data.pixCopiaECola;
 
       const qrcodeRespose = await reqEFI.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
 
       const data = {
         qrcode: qrcodeRespose.data.qrcode,
         imagemQrcode: `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeRespose.data.qrcode}&size=300x300&ecc=M`,
-        copyAndPaste,
+        copyQRCode,
       };
 
       res.json({ data });
