@@ -1,14 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
-import axios from 'axios';
+// eslint-disable-next-line import/no-cycle
+import requestEFIAPI from '../apis/efi';
 
 class PixController {
-  // eslint-disable-next-line consistent-return
   async getPIX(req, res) {
     const { valor, profileCPF, name } = req.body;
-    let accessToken = '';
-    let reqEFI = null;
     let copyQRCode = '';
 
     // Para não acessar o dotend em produção
@@ -16,64 +11,19 @@ class PixController {
       require('dotenv').config();
     }
 
-    // Carregando certificado em formato de Buffer
-    const cert = fs.readFileSync(
-      path.resolve(__dirname, `../../certs/${process.env.GN_CERT}`),
-    );
-
-    // Carregando pacote https com o certificado
-    const agent = new https.Agent({
-      pfx: cert,
-      passphrase: '',
-    });
-
-    // Criando credenciais
-    const credentials = Buffer.from(`${process.env.GN_CLIENT_ID}:${process.env.GN_CLIENT_SECRET}`).toString('base64');
-
-    // Enviar requisição por AXIOS
-    try {
-      const authResponse = await axios({
-        method: 'POST',
-        url: `${process.env.GN_ENDPOINT}/oauth/token`,
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          'Content-Type': 'application/json',
-        },
-        httpsAgent: agent,
-        data: { grant_type: 'client_credentials' },
-      });
-
-      const token = authResponse.data.access_token;
-      accessToken = token;
-    } catch (error) {
-      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar o token de acesso' });
-    }
-
-    // padronizando requisições com axios
-    try {
-      const efiAPI = axios.create({
-        baseURL: process.env.GN_ENDPOINT,
-        httpsAgent: agent,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      reqEFI = efiAPI;
-    } catch (error) {
-      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível conectar com a API do Gerencianet' });
-    }
-
     // validando parâmetros
     if (!valor || !profileCPF || !name) {
       return res.status(400).json({ error: 'Parâmetros inválidos', message: 'É necessário informar o valor, CPF e nome do pagador para gerar a cobrança' });
     }
 
+    // limpando CPF
     const cleanCPF = String(profileCPF).replace(/\D/g, '');
     if (cleanCPF.length !== 11) {
       return res.status(400).json({ error: 'CPF inválido' });
     }
+
+    // buscando instância do AXIOS para requisições autenticadas
+    const reqEFI = await requestEFIAPI();
 
     // cobrança com dados reais
     const dataCob = {
@@ -105,7 +55,7 @@ class PixController {
         copyQRCode,
       };
 
-      res.json({ data });
+      return res.status(200).json({ data });
     } catch (error) {
       return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
     }

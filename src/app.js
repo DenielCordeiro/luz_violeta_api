@@ -31,7 +31,6 @@ class App {
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.log('Não foi possível estabelecer conxão do backend com o MongoDB');
-      console.log(error);
     }
   }
 
