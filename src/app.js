@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import routes from './routes';
+import routes from './routes.js';
 import { getEfiRequest } from './apis/efi.js';
 
 let isConnected = false;
