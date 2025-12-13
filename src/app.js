@@ -5,20 +5,23 @@ import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes';
 import { getEfiRequest } from './apis/efi.js';
-import { bodyParser } from 'body-parser';
+
+let isConnected = false;
 
 class App {
   constructor() {
-    this.connectionDB();
     this.server = express();
     this.middlewares();
     this.routes();
     this.authenticateEFIBank();
+    this.connectionDB();
   }
 
   async connectionDB() {
+    if (isConnected) return;
+
     try {
-      const uri = 'mongodb+srv://luzvioleta:violeta@luzvioleta.h2xeiso.mongodb.net/luzvioleta';
+      const mongoURL = process.env.MONGO_URL;
 
       const clientOptions = {
         serverApi: {
@@ -28,10 +31,12 @@ class App {
         },
       };
 
-      await mongoose.connect(uri, clientOptions, {
+      await mongoose.connect(mongoURL, clientOptions, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
+
+      isConnected = true;
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.log('Não foi possível estabelecer conxão do backend com o MongoDB');
@@ -48,7 +53,6 @@ class App {
   async authenticateEFIBank() {
     try {
       const efiRequest = await getEfiRequest();
-      this.server.user(bodyParser.json());
 
       return efiRequest;
     } catch (error) {
