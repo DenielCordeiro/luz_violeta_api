@@ -17,11 +17,10 @@ const agent = new https.Agent({
   passphrase: '',
 });
 
-// Criando credenciais
-const credentials = Buffer.from(`${process.env.EFI_CLIENT_ID}:${process.env.EFI_CLIENT_SECRET}`).toString('base64');
+const credentials = Buffer.from(`${process.env.EFI_CLIENT_ID}:${process.env.EFI_CLIENT_SECRET}`).toString('base64'); // Credenciais em Base64
 
 // Enviar requisição por AXIOS
-function authAPIEFI() {
+function authenticate() {
   return axios({
     method: 'POST',
     url: `${process.env.EFI_ENDPOINT}/oauth/token`,
@@ -34,22 +33,25 @@ function authAPIEFI() {
   });
 }
 
-const authenticate = authAPIEFI();
+let efiInstance = null;
 
-// Criando instância do AXIOS para requisições autenticadas
-async function EFIRequest() {
-  const authResponse = await authenticate;
-  const accessToken = authResponse.data.access_token;
+export async function getEfiRequest() {
+  if (efiInstance) {
+    return efiInstance;
+  } else {
+    const authResponse = await authenticate(); // Autenticando e obtendo token
+    const accessToken = authResponse.data.access_token; // Obtendo token de acesso
 
-  // padronizando requisições com axios
-  return axios.create({
-    baseURL: process.env.EFI_ENDPOINT,
-    httpsAgent: agent,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
+    // padronizando requisições com axios
+    efiInstance = axios.create({
+      baseURL: process.env.EFI_ENDPOINT,
+      httpsAgent: agent,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return efiInstance;
+  }
 }
-
-export default EFIRequest;

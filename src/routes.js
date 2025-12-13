@@ -50,6 +50,8 @@ routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
+
 routes.post('/payments/pix', PixController.getPIX);
+routes.get('/payments/charges', PixController.getCharges);
 
 export default routes;

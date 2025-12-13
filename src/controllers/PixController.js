@@ -1,7 +1,8 @@
 // eslint-disable-next-line import/no-cycle
-import requestEFIAPI from '../apis/efi';
+import { getEfiRequest } from '../apis/efi.js';
 
 class PixController {
+
   async getPIX(req, res) {
     const { valor, profileCPF, name } = req.body;
     let copyQRCode = '';
@@ -23,7 +24,7 @@ class PixController {
     }
 
     // buscando instância do AXIOS para requisições autenticadas
-    const reqEFI = await requestEFIAPI();
+    const reqEFI = await getEfiRequest();
 
     // cobrança com dados reais
     const dataCob = {
@@ -59,6 +60,19 @@ class PixController {
     } catch (error) {
       return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
     }
+  }
+
+  async getCharges(req, res) {
+    const efiRequest = await getEfiRequest();
+
+    const chargesResponse = await efiRequest.get('/v2/cob', {
+      params: {
+        inicio: '2025-12-01T16:01:35Z',
+        fim: '2025-12-30T20:10:00Z',
+      },
+    });
+      
+    res.send(chargesResponse.data);
   }
 }
 
