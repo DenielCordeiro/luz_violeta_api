@@ -5,6 +5,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes';
 import { getEfiRequest } from './apis/efi.js';
+import { bodyParser } from 'body-parser';
 
 class App {
   constructor() {
@@ -47,6 +48,8 @@ class App {
   async authenticateEFIBank() {
     try {
       const efiRequest = await getEfiRequest();
+      this.server.user(bodyParser.json());
+
       return efiRequest;
     } catch (error) {
       /* eslint-disable-next-line no-console */

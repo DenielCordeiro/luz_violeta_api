@@ -3,6 +3,12 @@ import { getEfiRequest } from '../apis/efi.js';
 
 class PixController {
 
+  async webhook(req, res) {
+    console.log('Webhook recebido:', req.body);
+
+    res.status(200).json({ message: 'Webhook recebido com sucesso' });
+  }
+
   async getPIX(req, res) {
     const { valor, profileCPF, name } = req.body;
     let copyQRCode = '';

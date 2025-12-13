@@ -51,7 +51,8 @@ routes.put('/buy_product', CartController.buyProduct);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
 
-routes.post('/payments/pix', PixController.getPIX);
 routes.get('/payments/charges', PixController.getCharges);
+routes.post('/payments/pix', PixController.getPIX);
+routes.post('/webhook(/pix)?', PixController.webhook);
 
 export default routes;
