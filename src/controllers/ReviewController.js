@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import Review from '../models/Review';
+import Review from '../models/Review.js';
 
 class ReviewController {
   async getReviews(req, res) {

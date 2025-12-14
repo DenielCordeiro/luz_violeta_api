@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import News from '../models/News';
+import News from '../models/News.js';
 
 class ImagesOfNewsletterController {
   async getImages(req, res) {

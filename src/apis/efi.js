@@ -3,23 +3,35 @@ import fs from 'fs';
 import path from 'path';
 import https from 'https';
 import axios from 'axios';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
+// Criando __dirname em ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Carregando certificado em formato de Buffer
-const cert = fs.readFileSync(
-  path.resolve(__dirname, `../../certs/${process.env.EFI_CERT}`),
+const certPath = path.resolve(
+  __dirname,
+  '../../certs',
+  process.env.EFI_CERT
 );
 
-// Carregando pacote https com o certificado
+const cert = fs.readFileSync(certPath);
+
+// HTTPS Agent com certificado
 const agent = new https.Agent({
   pfx: cert,
   passphrase: '',
 });
 
-const credentials = Buffer.from(`${process.env.EFI_CLIENT_ID}:${process.env.EFI_CLIENT_SECRET}`).toString('base64'); // Credenciais em Base64
+// Credenciais em Base64
+const credentials = Buffer
+  .from(`${process.env.EFI_CLIENT_ID}:${process.env.EFI_CLIENT_SECRET}`)
+  .toString('base64');
 
-// Enviar requisição por AXIOS
+// Autenticação
 function authenticate() {
   return axios({
     method: 'POST',
@@ -36,22 +48,19 @@ function authenticate() {
 let efiInstance = null;
 
 export async function getEfiRequest() {
-  if (efiInstance) {
-    return efiInstance;
-  } else {
-    const authResponse = await authenticate(); // Autenticando e obtendo token
-    const accessToken = authResponse.data.access_token; // Obtendo token de acesso
+  if (efiInstance) return efiInstance;
 
-    // padronizando requisições com axios
-    efiInstance = axios.create({
-      baseURL: process.env.EFI_ENDPOINT,
-      httpsAgent: agent,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  const authResponse = await authenticate();
+  const accessToken = authResponse.data.access_token;
 
-    return efiInstance;
-  }
+  efiInstance = axios.create({
+    baseURL: process.env.EFI_ENDPOINT,
+    httpsAgent: agent,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return efiInstance;
 }

@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import Products from '../models/Products';
+import Products from '../models/Products.js';
 
 class ProductsController {
   async getProducts(req, res) {

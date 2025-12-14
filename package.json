@@ -5,7 +5,7 @@
   "repository": "https://github.com/DenielCordeiro/lv-core.git",
   "author": "Daniel de Souza Cordeiro <dcordeiro962@gmail.com>",
   "license": "MIT",
-
+  "type": "module",
   "engines": {
     "node": ">=20"
   },

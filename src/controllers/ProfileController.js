@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
-import User from '../models/User';
+import User from '../models/User.js';
 
 class ProfileController {
   async getUsers(req, res) {

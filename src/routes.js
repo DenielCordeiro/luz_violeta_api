@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import multer from 'multer';
 
-import authMiddleware from './middlewares/auth';
+import authMiddleware from './middlewares/auth.js';
 
-import uploadImage from './services/firebase';
+import uploadImage from './services/firebase.js';
 
-import SessionController from './controllers/SessionController';
-import ProfileController from './controllers/ProfileController';
-import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController';
-import ReviewController from './controllers/ReviewController';
-import ProductsController from './controllers/ProductsController';
-import CartController from './controllers/CartController';
-import MelhorEnvioController from './controllers/MelhorEnvioController';
-import PixController from './controllers/PixController';
+import SessionController from './controllers/SessionController.js';
+import ProfileController from './controllers/ProfileController.js';
+import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController.js';
+import ReviewController from './controllers/ReviewController.js';
+import ProductsController from './controllers/ProductsController.js';
+import CartController from './controllers/CartController.js';
+import MelhorEnvioController from './controllers/MelhorEnvioController.js';
+import PixController from './controllers/PixController.js';
 
 const routes = new Router();
 

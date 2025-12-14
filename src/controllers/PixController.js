@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import { getEfiRequest } from '../apis/efi.js';
+import dotenv from 'dotenv';
 
 class PixController {
 
@@ -15,7 +16,7 @@ class PixController {
 
     // Para não acessar o dotend em produção
     if (process.env.NODE_ENV !== 'production') {
-      require('dotenv').config();
+      dotenv.config();
     }
 
     // validando parâmetros
