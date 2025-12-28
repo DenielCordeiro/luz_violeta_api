@@ -1,24 +1,18 @@
 import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
 import https from 'https';
 import axios from 'axios';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-// Criando __dirname em ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+/**
+ * 🔐 Certificado EFI vem do ENV em Base64
+ * (Render NÃO permite arquivos secretos no filesystem)
+ */
+if (!process.env.EFI_CERT_BASE64) {
+  throw new Error('EFI_CERT_BASE64 não definido');
+}
 
-// Carregando certificado em formato de Buffer
-const certPath = path.resolve(
-  __dirname,
-  '../../certs',
-  process.env.EFI_CERT
-);
-
-const cert = fs.readFileSync(certPath);
+const cert = Buffer.from(process.env.EFI_CERT_BASE64, 'base64');
 
 // HTTPS Agent com certificado
 const agent = new https.Agent({
