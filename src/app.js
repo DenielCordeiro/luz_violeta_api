@@ -5,16 +5,32 @@ import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes.js';
 import { getEfiRequest } from './apis/efi.js';
+import EFIWebhook  from './services/efiWebhook.js';
 
 let isConnected = false;
 
 class App {
   constructor() {
     this.server = express();
+
     this.middlewares();
     this.routes();
     this.authenticateEFIBank();
     this.connectionDB();
+  }
+
+  async start() {
+    const PORT = process.env.PORT || 3333;
+
+    this.server.listen(PORT, async () => {
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+
+      try {
+        await EFIWebhook.registerWebhook();
+      } catch (err) {
+        console.error('Erro ao registrar webhook:', err.message);
+      }
+    });
   }
 
   async connectionDB() {
@@ -66,4 +82,4 @@ class App {
   }
 }
 
-export default new App().server;
+export default new App();

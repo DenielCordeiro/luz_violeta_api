@@ -45,7 +45,7 @@ class PixController {
       valor: {
         original: Number(valor).toFixed(2),
       },
-      chave: '43.488.029/0001-77',
+      chave: process.env.EFI_PIX_KEY,
       solicitacaoPagador: 'Cobrança de serviço artesanal prestado.',
     };
 

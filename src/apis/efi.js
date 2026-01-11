@@ -12,12 +12,11 @@ if (!process.env.EFI_CERT_BASE64) {
   throw new Error('EFI_CERT_BASE64 não definido');
 }
 
-const cert = Buffer.from(process.env.EFI_CERT_BASE64, 'base64');
+const certBuffer = Buffer.from(process.env.EFI_CERT_BASE64, 'base64');
 
 // HTTPS Agent com certificado
 const agent = new https.Agent({
-  pfx: cert,
-  passphrase: '',
+  pfx: certBuffer,
 });
 
 // Credenciais em Base64
@@ -40,18 +39,22 @@ function authenticate() {
 }
 
 let efiInstance = null;
+let tokenExpiresAt = 0;
 
 export async function getEfiRequest() {
-  if (efiInstance) return efiInstance;
+  if (efiInstance && Date.now() < tokenExpiresAt) {
+    return efiInstance;
+  }
 
-  const authResponse = await authenticate();
-  const accessToken = authResponse.data.access_token;
+  const { data } = await authenticate();
+
+  tokenExpiresAt = Date.now + (data.expires_in -60) * 1000;
 
   efiInstance = axios.create({
     baseURL: process.env.EFI_ENDPOINT,
     httpsAgent: agent,
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${data.access_token}`,
       'Content-Type': 'application/json',
     },
   });
