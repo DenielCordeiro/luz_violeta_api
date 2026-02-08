@@ -41,6 +41,9 @@ importers:
       mongoose:
         specifier: ^7.5.2
         version: 7.8.8
+      mongoose-paginate-v2:
+        specifier: ^1.9.1
+        version: 1.9.1(mongoose@7.8.8)
       morgan:
         specifier: ^1.10.0
         version: 1.10.1
@@ -2062,6 +2065,16 @@ packages:
       socks:
         optional: true
 
+  mongoose-lean-virtuals@1.1.1:
+    resolution: {integrity: sha512-8chOqpVE3bcoWT2pIgcJeIZlXaOfQCavZgQZF4qytUtjRBqsNMyzUoR16qdw9XL2kC478N8iA8z0AA+NSS0d1A==}
+    engines: {node: '>=16.20.1'}
+    peerDependencies:
+      mongoose: '>=5.11.10'
+
+  mongoose-paginate-v2@1.9.1:
+    resolution: {integrity: sha512-DgURdWkPCeY6cuzkONk0snkFFG/l6ABABDkV3PyW/M2XGvfK/yP4i6Y/PuXkqhfVxKHFLvZ/qBnQxkGzzvo43Q==}
+    engines: {node: '>=4.0.0'}
+
   mongoose@7.8.8:
     resolution: {integrity: sha512-0ntQOglVjlx3d+1sLK45oO5f6GuTgV/zbao0zkpE5S5W40qefpyYQ3Mq9e9nRzR58pp57WkVU+PgM64sVVcxNg==}
     engines: {node: '>=14.20.1'}
@@ -2069,6 +2082,10 @@ packages:
   morgan@1.10.1:
     resolution: {integrity: sha512-223dMRJtI/l25dJKWpgij2cMtywuG/WiUKXdvwfbhGKBhy1puASqXwFzmWZ7+K73vUPoR7SS2Qz2cI/g9MKw0A==}
     engines: {node: '>= 0.8.0'}
+
+  mpath@0.8.4:
+    resolution: {integrity: sha512-DTxNZomBcTWlrMW76jy1wvV37X/cNNxPW1y2Jzd4DZkAaC5ZGsm8bfGfNOthcDuRJujXLqiuS6o3Tpy0JEoh7g==}
+    engines: {node: '>=4.0.0'}
 
   mpath@0.9.0:
     resolution: {integrity: sha512-ikJRQTk8hw5DEoFVxHG1Gn9T/xcjtdnOKIU1JTmGjZZlg9LST2mBLmcX3/ICIbgJydT2GOc15RnNy5mHmzfSew==}
@@ -5410,6 +5427,17 @@ snapshots:
     optionalDependencies:
       socks: 2.8.7
 
+  mongoose-lean-virtuals@1.1.1(mongoose@7.8.8):
+    dependencies:
+      mongoose: 7.8.8
+      mpath: 0.8.4
+
+  mongoose-paginate-v2@1.9.1(mongoose@7.8.8):
+    dependencies:
+      mongoose-lean-virtuals: 1.1.1(mongoose@7.8.8)
+    transitivePeerDependencies:
+      - mongoose
+
   mongoose@7.8.8:
     dependencies:
       bson: 5.5.1
@@ -5436,6 +5464,8 @@ snapshots:
       on-headers: 1.1.0
     transitivePeerDependencies:
       - supports-color
+
+  mpath@0.8.4: {}
 
   mpath@0.9.0: {}
 

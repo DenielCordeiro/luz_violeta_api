@@ -9,12 +9,10 @@
   "engines": {
     "node": ">=20"
   },
-
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
-
   "dependencies": {
     "api": "^6.1.1",
     "axios": "^1.10.0",
@@ -27,12 +25,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.1.0",
     "mongoose": "^7.5.2",
+    "mongoose-paginate-v2": "^1.9.1",
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
     "node-fetch": "2",
     "yup": "^1.2.0"
   },
-
   "devDependencies": {
     "@babel/cli": "^7.22.15",
     "@babel/core": "^7.22.20",

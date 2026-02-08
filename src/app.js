@@ -4,7 +4,6 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes.js';
-import { getEfiRequest } from './apis/efi.js';
 import EFIWebhook  from './services/efiWebhook.js';
 
 let isConnected = false;
@@ -64,17 +63,6 @@ class App {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(morgan('dev'));
-  }
-
-  async authenticateEFIBank() {
-    try {
-      const efiRequest = await getEfiRequest();
-
-      return efiRequest;
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.log('Erro ao autenticar com o banco EFI:', error.message);
-    }
   }
 
   routes() {

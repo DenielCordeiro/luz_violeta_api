@@ -11,6 +11,15 @@ class PixController {
   }
 
   async getPIX(req, res) {
+    try {
+      const efiRequest = await getEfiRequest();
+
+      return efiRequest;
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.log('Erro ao autenticar com o banco EFI:', error.message);
+    }
+    
     const { valor, profileCPF, name } = req.body;
     let copyQRCode = '';
 

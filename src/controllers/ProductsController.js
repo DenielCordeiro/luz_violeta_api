@@ -3,18 +3,38 @@ import Products from '../models/Products.js';
 
 class ProductsController {
   async getProducts(req, res) {
-    const { allProducts } = req.params;
-    const data = await Products.find({ allProducts });
-    const products = { data };
+    const schema = Yup.object().shape({ 
+      page: Yup.number().min(1).default(1),
+      limit: Yup.number().min(1).max(10).default(5), 
+    });
 
-    return res.json(products);
+    try {
+      const validated = await schema.validate(req.query, { stripUnknown: true });
+
+      const { page, limit} = validated;
+
+        const products = await Products.paginate({}, {
+        page,
+        limit,
+        sort: { createdAt: -1 } // ordena por data de criação
+      });
+
+      return res.status(200).json({ data: products });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar produtos' });
+    }
   }
 
   async getProduct(req, res) {
     const { product_id } = req.params;
-    const data = await Products.findById(product_id);
 
-    return res.json({ data });
+    try {
+      const product = await Products.findById(product_id);
+      
+      return res.status(200).json({ data: product });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar produto' });
+    }
   }
 
   async createProduct(req, res) {
