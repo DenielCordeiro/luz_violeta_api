@@ -14,7 +14,6 @@ class App {
 
     this.middlewares();
     this.routes();
-    this.authenticateEFIBank();
     this.connectionDB();
   }
 
@@ -23,12 +22,6 @@ class App {
 
     this.server.listen(PORT, async () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
-
-      try {
-        await EFIWebhook.registerWebhook();
-      } catch (err) {
-        console.error('Erro ao registrar webhook:', err.message);
-      }
     });
   }
 
