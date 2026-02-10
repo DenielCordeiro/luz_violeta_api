@@ -5,8 +5,6 @@ import dotenv from 'dotenv';
 class PixController {
 
   async webhook(req, res) {
-    console.log('Webhook recebido:', req.body);
-
     res.status(200).json({ message: 'Webhook recebido com sucesso' });
   }
 
@@ -66,13 +64,13 @@ class PixController {
 
       const qrcodeRespose = await reqEFI.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
 
-      const data = {
+      const qrCodePix = {
         qrcode: qrcodeRespose.data.qrcode,
         imagemQrcode: `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeRespose.data.qrcode}&size=300x300&ecc=M`,
         copyQRCode,
       };
 
-      return res.status(200).json({ data });
+      return res.status(200).json({ qrCodePix });
     } catch (error) {
       return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
     }

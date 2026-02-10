@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const News = new Schema({
+const Images = new Schema({
   type: String,
   linkProduct: String,
   file: {
@@ -15,4 +15,4 @@ const News = new Schema({
   },
 });
 
-export default model('News', News);
+export default model('Images', Images);

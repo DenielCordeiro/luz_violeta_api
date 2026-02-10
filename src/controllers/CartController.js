@@ -6,22 +6,38 @@ class CartController {
     const { products } = req.body;
     const { user_id } = req.params;
 
-    const userUpdated = await User.findByIdAndUpdate(user_id, {
-      productsCart: products,
-    });
+    try {
+      const userUpdated = await User.findByIdAndUpdate(user_id, {
+        productsCart: products,
+      });
+  
+      return res.status(200).json(userUpdated);
+    } catch (error) {
 
-    return res.json(userUpdated);
+      return res.status(500).json({ 
+        fail: 'Erro ao adicionar no carrinho',
+        messageError: error
+      });
+    }
   }
 
   async clearCart(req, res) {
     const { user_id } = req.params;
     const product = {};
 
-    const userUpdated = await User.findByIdAndUpdate(user_id, {
-      productsCart: product,
-    });
+    try {
+      const userUpdated = await User.findByIdAndUpdate(user_id, {
+        productsCart: product,
+      });
+  
+      return res.status(200).json({ data: userUpdated });
+    } catch (error) {
 
-    return res.json({ data: userUpdated });
+      return res.status(500).json({ 
+        fail: 'Erro ao limpar carrinho',
+        messageError: error
+      });
+    }
   }
 
   async buyProduct(req, res) {
@@ -35,16 +51,24 @@ class CartController {
       },
     } = req.body;
 
-    const productUpdated = await Products.findByIdAndUpdate(product_id, {
-      userId,
-      shipping: {
-        price,
-        name,
-        postalCode,
-      },
-    });
+    try {
+      const productUpdated = await Products.findByIdAndUpdate(product_id, {
+        userId,
+        shipping: {
+          price,
+          name,
+          postalCode,
+        },
+      });
+  
+      return res.status(200).json(productUpdated);
+    } catch (error) {
 
-    return res.json(productUpdated);
+      return res.status(500).json({ 
+        fail: 'Erro ao comprar produto(s)',
+        messageError: error
+      });
+    }
   }
 }
 

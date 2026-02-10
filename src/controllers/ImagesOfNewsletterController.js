@@ -1,14 +1,16 @@
 import * as Yup from 'yup';
-import News from '../models/News.js';
+import Images from '../models/Images.js';
 
 class ImagesOfNewsletterController {
   async getImages(req, res) {
-    const { allNews } = req.params;
+    const { allImages } = req.params;
 
     try {
-      const data = await News.find({ allNews });
-      return res.json({ data });
+      const images = await Images.find({ allImages });
+
+      return res.status(200).json({ images });
     } catch (error) {
+
       return res.status(500).json({
         fail: 'Não foi possível buscar todas as imagens!',
         messageError: error,
@@ -39,7 +41,7 @@ class ImagesOfNewsletterController {
     }
 
     try {
-      const news = await News.create({
+      const image = await Images.create({
         type,
         linkProduct,
         file: {
@@ -50,8 +52,9 @@ class ImagesOfNewsletterController {
         },
       });
 
-      return res.json({ data: news });
+      return res.status(200).json({ image });
     } catch (error) {
+
       return res.status(500).json({
         fail: 'Não foi possivel criar uma nova imagem!',
         messageError: error,
@@ -84,7 +87,7 @@ class ImagesOfNewsletterController {
     }
 
     try {
-      const news = await News.updateOne({ _id: news_id }, {
+      const image = await Images.updateOne({ _id: news_id }, {
         type,
         linkProduct,
         file: {
@@ -95,8 +98,9 @@ class ImagesOfNewsletterController {
         },
       });
 
-      return res.json({ data: news });
+      return res.status(200).json({ image });
     } catch (error) {
+
       return res.status(500).json({
         fail: 'Não foi possível atualizar a dados da imagem!',
         messageError: error,
@@ -112,9 +116,9 @@ class ImagesOfNewsletterController {
     }
 
     try {
-      const result = await News.findByIdAndDelete({ _id: news_id });
+      const result = await Images.findByIdAndDelete({ _id: news_id });
 
-      return res.json({ result });
+      return res.status(200).json({ result });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível deletar a imagem!',

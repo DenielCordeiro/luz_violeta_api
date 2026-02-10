@@ -6,16 +6,33 @@ import User from '../models/User.js';
 class ProfileController {
   async getUsers(req, res) {
     const { allProfiles } = req.params;
-    const profiles = await User.find({ allProfiles });
 
-    return res.json(profiles);
+    try {
+      const profiles = await User.find({ allProfiles });
+
+      return res.status(200).json(profiles);
+    } catch (error) {
+
+      return res.status(500).json({ 
+        fail: 'Erro ao buscar usuários',
+        messageError: error
+      });
+    }
   }
 
   async getUser(req, res) {
     const { user_id } = req.params;
-    const profile = await User.findById(user_id);
-
-    return res.json({ data: profile });
+    try {
+      const profile = await User.findById(user_id);
+      
+      return res.status(200).json({ data: profile });
+    } catch (error) {
+      
+      return res.status(500).json({ 
+        fail: 'Erro ao buscar usuário',
+        messageError: error
+      });
+    }
   }
 
   async createUser(req, res) {
@@ -46,26 +63,34 @@ class ProfileController {
     } = req.body;
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na Validação dos campos!' });
+      return res.status(400).json({ fail: 'Falha na Validação dos campos!' });
     }
 
-    const securityForce = 6;
-    const hashedPassword = bcrypt.hashSync(password, securityForce);
+    try {
+      const securityForce = 6;
+      const hashedPassword = bcrypt.hashSync(password, securityForce);
 
-    const profiles = await User.create({
-      email,
-      password: hashedPassword,
-      name,
-      cellphone,
-      postalCode,
-      state,
-      city,
-      street,
-      neighborhood,
-      houseNumber,
-    });
-
-    return res.json(profiles);
+      const profiles = await User.create({
+        email,
+        password: hashedPassword,
+        name,
+        cellphone,
+        postalCode,
+        state,
+        city,
+        street,
+        neighborhood,
+        houseNumber,
+      });
+  
+      return res.status(200).json(profiles);
+    } catch (error) {
+      
+      return res.status(500).json({ 
+        fail: 'Erro ao criar usuário',
+        messageError: error
+      });
+    }
   }
 
   async updateUser(req, res) {
@@ -83,7 +108,7 @@ class ProfileController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação dos campos!' });
+      return res.status(400).json({ fail: 'Falha na validação dos campos!' });
     }
 
     const {
@@ -101,31 +126,47 @@ class ProfileController {
 
     const user_id = req.params;
 
-    const securityForce = 6;
-    const hashedPassword = bcrypt.hashSync(password, securityForce);
-
-    await User.updateOne({ _id: user_id }, {
-      email,
-      password: hashedPassword,
-      name,
-      cellphone,
-      postalCode,
-      state,
-      city,
-      street,
-      neighborhood,
-      houseNumber,
-    });
-
-    return res.send();
+    try {
+      const securityForce = 6;
+      const hashedPassword = bcrypt.hashSync(password, securityForce);
+  
+      await User.updateOne({ _id: user_id }, {
+        email,
+        password: hashedPassword,
+        name,
+        cellphone,
+        postalCode,
+        state,
+        city,
+        street,
+        neighborhood,
+        houseNumber,
+      });
+  
+      return res.send();
+    } catch (error) {
+      
+      return res.status(500).json({ 
+        fail: 'Erro ao atualizar usuários',
+        messageError: error
+      });
+    }
   }
 
   async deleteUser(req, res) {
     const { user_id } = req.params;
 
-    await User.findByIdAndDelete({ _id: user_id });
-
-    return res.send();
+    try {
+      await User.findByIdAndDelete({ _id: user_id });
+  
+      return res.send();
+    } catch (error) {
+      
+      return res.status(500).json({ 
+        fail: 'Erro ao excluir usuário',
+        messageError: error
+      });
+    }
   }
 }
 

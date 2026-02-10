@@ -13,15 +13,19 @@ class ProductsController {
 
       const { page, limit} = validated;
 
-        const products = await Products.paginate({}, {
+      const products = await Products.paginate({}, {
         page,
         limit,
         sort: { createdAt: -1 } // ordena por data de criação
       });
 
-      return res.status(200).json({ data: products });
+      return res.status(200).json({ products });
     } catch (error) {
-      return res.status(500).json({ error: 'Erro ao buscar produtos' });
+
+      return res.status(500).json({ 
+        fail: 'Erro ao buscar produtos',
+        messageError: error
+      });
     }
   }
 
@@ -31,9 +35,13 @@ class ProductsController {
     try {
       const product = await Products.findById(product_id);
       
-      return res.status(200).json({ data: product });
+      return res.status(200).json({ product });
     } catch (error) {
-      return res.status(500).json({ error: 'Erro ao buscar produto' });
+
+      return res.status(500).json({ 
+        fail: 'Erro ao buscar produto',
+        messageError: error
+      });
     }
   }
 
@@ -62,24 +70,32 @@ class ProductsController {
     } = req.file ? req.file : '';
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ erro: 'Falha na validação dos campos!' });
+      return res.status(400).json({ fail: 'Falha na validação dos campos!' });
     }
 
-    const product = await Products.create({
-      type,
-      valor,
-      name,
-      description,
-      groups,
-      file: {
-        name: nameImage,
-        size: sizeImage,
-        key: keyImage,
-        url: urlImage,
-      },
-    });
+    try {
+      const product = await Products.create({
+        type,
+        valor,
+        name,
+        description,
+        groups,
+        file: {
+          name: nameImage,
+          size: sizeImage,
+          key: keyImage,
+          url: urlImage,
+        },
+      });
+  
+      return res.status(200).json({ product });
+    } catch (error) {
 
-    return res.json({ data: product });
+      return res.status(500).json({ 
+        fail: 'Erro ao criar produto',
+        messageError: error
+      });
+    }
   }
 
   async updateProduct(req, res) {
@@ -107,40 +123,51 @@ class ProductsController {
     } = req.file ? req.file : '';
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ erro: 'Falha na validação dos campos!' });
+
+      return res.status(400).json({ fail: 'Falha na validação dos campos!' });
     }
 
     const { product_id } = req.params;
 
-    const product = await Products.updateOne({ _id: product_id }, {
-      type,
-      valor,
-      name,
-      description,
-      groups,
-      file: {
-        name: nameImage,
-        size: sizeImage,
-        key: keyImage,
-        url: urlImage,
-      },
-    });
+    try {
+      const product = await Products.updateOne({ _id: product_id }, {
+        type,
+        valor,
+        name,
+        description,
+        groups,
+        file: {
+          name: nameImage,
+          size: sizeImage,
+          key: keyImage,
+          url: urlImage,
+        },
+      });
+  
+      return res.status(200).json({ product });
+    } catch (error) {
 
-    return res.json({ data: product });
+      return res.status(500).json({ 
+        fail: 'Erro ao atualizar produto',
+        messageError: error
+      });
+    }
   }
 
   async deleteProduct(req, res) {
     const { product_id } = req.params;
-    const result = await Products.findByIdAndDelete({ _id: product_id });
 
-    if (!result) {
-      const error = 'Não foi possível excluir Produto';
-      return res.json({ data: error });
+    try {
+      const result = await Products.findByIdAndDelete({ _id: product_id });
+
+      return res.status(200).json(result)
+    } catch (error) {
+
+      return res.status(500).json({
+        fail: 'Erro ao excluir produto',
+        messageError: error
+      });
     }
-
-    const data = { delete: true };
-
-    return res.json(data);
   }
 }
 

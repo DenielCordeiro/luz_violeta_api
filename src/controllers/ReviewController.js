@@ -6,9 +6,9 @@ class ReviewController {
     const { allReviews } = req.params;
 
     try {
-      const data = await Review.find({ allReviews });
+      const reviews = await Review.find({ allReviews });
 
-      return res.json(data);
+      return res.json(reviews);
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível buscar as avaliações no Banco de Dados!',
@@ -37,14 +37,14 @@ class ReviewController {
     }
 
     try {
-      const data = await Review.create({
+      const newReview = await Review.create({
         userName,
         review,
         stars,
         filledStars,
       });
 
-      return res.status(200).json({ data });
+      return res.status(200).json({ newReview });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível salvar nova avaliação no banco de dados!',
@@ -79,14 +79,14 @@ class ReviewController {
     }
 
     try {
-      const data = await Review.updateOne({ _id: review_id }, {
+      const reviewUpdated = await Review.updateOne({ _id: review_id }, {
         userName,
         review,
         stars,
         filledStars,
       });
 
-      return res.status(200).json({ data });
+      return res.status(200).json({ reviewUpdated });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível atualizar avaliação no banco de dados!',
@@ -103,9 +103,9 @@ class ReviewController {
     }
 
     try {
-      const data = await Review.findByIdAndDelete({ _id: review_id });
+      const reviewDeleted = await Review.findByIdAndDelete({ _id: review_id });
 
-      return res.status(200).json({ data });
+      return res.status(200).json({ reviewDeleted });
     } catch (error) {
       return res.status(500).json({
         fail: 'Não foi possível excluir avaliação do banco de dados!',

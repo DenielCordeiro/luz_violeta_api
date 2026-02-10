@@ -23,15 +23,13 @@ class SessionController {
     });
 
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({
-        error: '[Falha na validação]: E-mail ou Senha incorretos.',
-      });
+      return res.status(400).json({ fail: '[Falha na validação]: E-mail ou Senha incorretos.' });
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: 'E-mail não existe.' });
+      return res.status(401).json({ fail: 'E-mail não existe.' });
     }
 
     const userPassword = user.password;
@@ -39,7 +37,7 @@ class SessionController {
     const bool = bcrypt.compareSync(password, userPassword);
 
     if (!bool) {
-      return res.status(401).json({ error: 'Senha incorreta.' });
+      return res.status(401).json({ fail: 'Senha incorreta.' });
     }
 
     const {
@@ -56,27 +54,35 @@ class SessionController {
       productsCart,
     } = user;
 
-    const profile = {
-      user: {
-        id,
-        name,
-        email: userEmail,
-        cellphone,
-        postalCode,
-        state,
-        city,
-        street,
-        neighborhood,
-        houseNumber,
-        productsCart,
-      },
-      token: Jwt.sign({ id }, authConfig.secret, {
-        expiresIn: authConfig.expiresIn,
-      }),
-      administrator: adm,
-    };
+    try {
+      const profile = {
+        user: {
+          id,
+          name,
+          email: userEmail,
+          cellphone,
+          postalCode,
+          state,
+          city,
+          street,
+          neighborhood,
+          houseNumber,
+          productsCart,
+        },
+        token: Jwt.sign({ id }, authConfig.secret, {
+          expiresIn: authConfig.expiresIn,
+        }),
+        administrator: adm,
+      };
+  
+      return res.status(200).json({ profile });
+    } catch (error) {
 
-    return res.json({ data: profile });
+      return res.status(500).json({ 
+        fail: 'Erro para realizar login',
+        messageError: error
+      });
+    }
   }
 }
 
