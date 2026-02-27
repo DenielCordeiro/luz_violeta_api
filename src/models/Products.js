@@ -17,6 +17,9 @@ const ProductsSchema = new Schema({
       default: Date.now,
     },
   },
+},
+{
+  timestamps: true,
 });
 
 ProductsSchema.plugin(mongoosePaginate);

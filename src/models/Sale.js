@@ -12,6 +12,9 @@ const SaleSchema = new Schema({
   finalValue: Number,
   user: User,
   products: [],
+},
+{
+  timestamps: true,
 });
 
 export default model('Sale', SaleSchema);
