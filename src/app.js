@@ -1,12 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import mongoose from 'mongoose';
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import routes from './routes.js';
-import EFIWebhook  from './services/efiWebhook.js';
 
-let isConnected = false;
+import routes from './routes.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 class App {
   constructor() {
@@ -14,40 +16,36 @@ class App {
 
     this.middlewares();
     this.routes();
-    this.connectionDB();
   }
 
   async start() {
+    await this.connectionDB();
+
     const PORT = process.env.PORT || 3333;
 
-    this.server.listen(PORT, async () => {
+    this.server.listen(PORT, () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
     });
   }
 
   async connectionDB() {
-    if (isConnected) return;
+    const uri = process.env.MONGO_URL;
+    const clientOptions = { 
+      serverApi: {
+        version: '1',
+        strict: true,
+        deprecationErrors: true
+      }
+    };
 
     try {
-      const mongoURL = process.env.MONGO_URL;
+      await mongoose.connect(uri, clientOptions);
+      await mongoose.connection.db.admin().command({ ping: 1 });
 
-      const clientOptions = {
-        serverApi: {
-          version: '1',
-          strict: true,
-          deprecationErrors: true,
-        },
-      };
-
-      await mongoose.connect(mongoURL, clientOptions, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-
-      isConnected = true;
+      console.log('Banco conectado!');
+      
     } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.log('Não foi possível estabelecer conxão do backend com o MongoDB');
+      console.error('Erro ao conectar no MongoDB:', error);
     }
   }
 
