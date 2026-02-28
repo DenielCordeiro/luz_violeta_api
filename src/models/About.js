@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
 
-const ParagraphSchema = new mongoose.Schema({
+const ParagraphSchema = new Schema({
     _id: Number,
     phrases: String,
 });
 
-const SectionSchema = new mongoose.Schema({
+const SectionSchema = new Schema({
     title: String,
     paragraph: [ParagraphSchema],
 });

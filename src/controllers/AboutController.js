@@ -1,12 +1,12 @@
-import About from "../models/About";
 import * as Yup from 'yup';
+import About from '../models/About.js';
 
 class AboutController {
     async getAbout(req, res) {
-        const { allProfiles } = req.params;
+        const { data } = req.params;
 
         try {
-            const dataAbout = await About.find(allProfiles);
+            const dataAbout = await About.find(data);
 
             return res.status(200).json(dataAbout);
         } catch (error) {
