@@ -11,6 +11,7 @@ import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterContro
 import ReviewController from './controllers/ReviewController.js';
 import ProductsController from './controllers/ProductsController.js';
 import CartController from './controllers/CartController.js';
+import AboutController from './controllers/AboutController.js';
 import MelhorEnvioController from './controllers/MelhorEnvioController.js';
 import PixController from './controllers/PixController.js';
 
@@ -48,6 +49,9 @@ routes.delete('/products/:product_id', ProductsController.deleteProduct);
 routes.put('/save_cart/:user_id', CartController.addCartProduct);
 routes.put('/clear_cart/:user_id', CartController.clearCart);
 routes.put('/buy_product', CartController.buyProduct);
+
+routes.get('/about', AboutController.getAbout);
+routes.put('/about', AboutController.updateAbout);
 
 routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
 
