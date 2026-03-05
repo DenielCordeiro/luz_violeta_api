@@ -29,26 +29,15 @@ class App {
   }
 
   async connectionDB() {
-    const uri = process.env.MONGO_URL;
-    const clientOptions = { 
-      serverApi: {
-        version: '1',
-        strict: true,
-        deprecationErrors: true
-      }
-    };
-
     try {
-      await mongoose.connect(uri, clientOptions);
-      await mongoose.connection.db.admin().command({ ping: 1 });
-
-      console.log('Banco conectado!');
-      
+      await mongoose.connect(process.env.MONGO_URL);
+      console.log('✅ MongoDB conectado com sucesso!');
     } catch (error) {
-      console.error('Erro ao conectar no MongoDB:', error);
+      console.error('❌ Erro ao conectar no MongoDB:', error);
+      process.exit(1);
     }
   }
-
+  
   middlewares() {
     this.server.use(cors());
     this.server.use(express.json());
