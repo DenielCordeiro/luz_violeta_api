@@ -37,9 +37,10 @@ class FreightController {
     } catch (error) {
       // 3. Tratamento de erro robusto
       const status = error.response ? error.response.status : 500;
-      const message = error.response ? error.response.data : 'Erro interno no servidor';
+      const message = error.response ? error.response.data : 'Erro interno no servidor, pode ser o token do melhor envio ou o CEP de destino.';
 
-      console.error('Erro na cotação:', message);
+      console.error('[ERRO]: Pode ser o token do melhor envio ou o CEP de destino.');
+      console.error('Erro na cotação de frete:', message);
       return res.status(status).json({ error: message });
     }
   }
