@@ -1,93 +1,93 @@
 // eslint-disable-next-line import/no-cycle
-import { getEfiRequest } from '../apis/efi.js';
-import dotenv from 'dotenv';
+// import { getEfiRequest } from '../apis/efi.js';
+// import dotenv from 'dotenv';
 
-class PixController {
+// class PixController {
 
-  async webhook(req, res) {
-    res.status(200).json({ message: 'Webhook recebido com sucesso' });
-  }
+//   async webhook(req, res) {
+//     res.status(200).json({ message: 'Webhook recebido com sucesso' });
+//   }
 
-  async getPIX(req, res) {
-    try {
-      const efiRequest = await getEfiRequest();
+//   async getPIX(req, res) {
+//     try {
+//       const efiRequest = await getEfiRequest();
 
-      return efiRequest;
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.log('Erro ao autenticar com o banco EFI:', error.message);
-    }
+//       return efiRequest;
+//     } catch (error) {
+//       /* eslint-disable-next-line no-console */
+//       console.log('Erro ao autenticar com o banco EFI:', error.message);
+//     }
     
-    const { valor, profileCPF, name } = req.body;
-    let copyQRCode = '';
+//     const { valor, profileCPF, name } = req.body;
+//     let copyQRCode = '';
 
-    // Para não acessar o dotend em produção
-    if (process.env.NODE_ENV !== 'production') {
-      dotenv.config();
-    }
+//     // Para não acessar o dotend em produção
+//     if (process.env.NODE_ENV !== 'production') {
+//       dotenv.config();
+//     }
 
-    // validando parâmetros
-    if (!valor || !profileCPF || !name) {
-      return res.status(400).json({ error: 'Parâmetros inválidos', message: 'É necessário informar o valor, CPF e nome do pagador para gerar a cobrança' });
-    }
+//     // validando parâmetros
+//     if (!valor || !profileCPF || !name) {
+//       return res.status(400).json({ error: 'Parâmetros inválidos', message: 'É necessário informar o valor, CPF e nome do pagador para gerar a cobrança' });
+//     }
 
-    // limpando CPF
-    const cleanCPF = String(profileCPF).replace(/\D/g, '');
-    if (cleanCPF.length !== 11) {
-      return res.status(400).json({ error: 'CPF inválido' });
-    }
+//     // limpando CPF
+//     const cleanCPF = String(profileCPF).replace(/\D/g, '');
+//     if (cleanCPF.length !== 11) {
+//       return res.status(400).json({ error: 'CPF inválido' });
+//     }
 
-    // buscando instância do AXIOS para requisições autenticadas
-    const reqEFI = await getEfiRequest();
+//     // buscando instância do AXIOS para requisições autenticadas
+//     const reqEFI = await getEfiRequest();
 
-    // cobrança com dados reais
-    const dataCob = {
-      calendario: {
-        expiracao: 3600,
-      },
-      devedor: {
-        cpf: cleanCPF,
-        nome: name,
-      },
-      valor: {
-        original: Number(valor).toFixed(2),
-      },
-      chave: process.env.EFI_PIX_KEY,
-      solicitacaoPagador: 'Cobrança de serviço artesanal prestado.',
-    };
+//     // cobrança com dados reais
+//     const dataCob = {
+//       calendario: {
+//         expiracao: 3600,
+//       },
+//       devedor: {
+//         cpf: cleanCPF,
+//         nome: name,
+//       },
+//       valor: {
+//         original: Number(valor).toFixed(2),
+//       },
+//       chave: process.env.EFI_PIX_KEY,
+//       solicitacaoPagador: 'Cobrança de serviço artesanal prestado.',
+//     };
 
-    // enviando dados da cobrança para o front-end com axios
-    try {
-      const cobResponse = await reqEFI.post('/v2/cob', dataCob);
+//     // enviando dados da cobrança para o front-end com axios
+//     try {
+//       const cobResponse = await reqEFI.post('/v2/cob', dataCob);
 
-      copyQRCode = cobResponse.data.pixCopiaECola;
+//       copyQRCode = cobResponse.data.pixCopiaECola;
 
-      const qrcodeRespose = await reqEFI.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
+//       const qrcodeRespose = await reqEFI.get(`/v2/loc/${cobResponse.data.loc.id}/qrcode`);
 
-      const qrCodePix = {
-        qrcode: qrcodeRespose.data.qrcode,
-        imagemQrcode: `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeRespose.data.qrcode}&size=300x300&ecc=M`,
-        copyQRCode,
-      };
+//       const qrCodePix = {
+//         qrcode: qrcodeRespose.data.qrcode,
+//         imagemQrcode: `https://api.qrserver.com/v1/create-qr-code/?data=${qrcodeRespose.data.qrcode}&size=300x300&ecc=M`,
+//         copyQRCode,
+//       };
 
-      return res.status(200).json({ qrCodePix });
-    } catch (error) {
-      return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
-    }
-  }
+//       return res.status(200).json({ qrCodePix });
+//     } catch (error) {
+//       return res.status(400).json({ error: error.response?.data || error.message, message: 'Não foi possível gerar a cobrança' });
+//     }
+//   }
 
-  async getCharges(req, res) {
-    const efiRequest = await getEfiRequest();
+//   async getCharges(req, res) {
+//     const efiRequest = await getEfiRequest();
 
-    const chargesResponse = await efiRequest.get('/v2/cob', {
-      params: {
-        inicio: '2025-12-01T16:01:35Z',
-        fim: '2025-12-30T20:10:00Z',
-      },
-    });
+//     const chargesResponse = await efiRequest.get('/v2/cob', {
+//       params: {
+//         inicio: '2025-12-01T16:01:35Z',
+//         fim: '2025-12-30T20:10:00Z',
+//       },
+//     });
       
-    res.send(chargesResponse.data);
-  }
-}
+//     res.send(chargesResponse.data);
+//   }
+// }
 
-export default new PixController();
+// export default new PixController();

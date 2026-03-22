@@ -12,8 +12,7 @@ import ReviewController from './controllers/ReviewController.js';
 import ProductsController from './controllers/ProductsController.js';
 import CartController from './controllers/CartController.js';
 import AboutController from './controllers/AboutController.js';
-import MelhorEnvioController from './controllers/MelhorEnvioController.js';
-import PixController from './controllers/PixController.js';
+import FreightController from './controllers/FreightController.js';
 
 const routes = new Router();
 
@@ -53,10 +52,6 @@ routes.put('/buy_product', CartController.buyProduct);
 routes.get('/about', AboutController.getAbout);
 routes.put('/about', AboutController.updateAbout);
 
-routes.post('/melhor-envio/:postal_code', MelhorEnvioController.searchPostalCode);
-
-routes.get('/payments/charges', PixController.getCharges);
-routes.post('/payments/pix', PixController.getPIX);
-routes.post('/webhook(/pix)?', PixController.webhook);
+routes.post('/melhor-envio/:zipCode', FreightController.calculateFreight);
 
 export default routes;

@@ -1,4 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import dns from 'node:dns';
+dns.setDefaultResultOrder('ipv4first');
+
 import mongoose from 'mongoose';
 
 import express from 'express';
@@ -13,7 +16,6 @@ dotenv.config();
 class App {
   constructor() {
     this.server = express();
-
     this.middlewares();
     this.routes();
   }
@@ -29,8 +31,14 @@ class App {
   }
 
   async connectionDB() {
+    const uri = process.env.MONGO_URL;
+
     try {
-      await mongoose.connect(process.env.MONGO_URL);
+      await mongoose.connect(uri, {
+        family: 4,
+        serverSelectionTimeoutMS: 10000,
+      });
+      await mongoose.connection.db.admin().command({ ping: 1 });
       console.log('✅ MongoDB conectado com sucesso!');
     } catch (error) {
       console.error('❌ Erro ao conectar no MongoDB:', error);
