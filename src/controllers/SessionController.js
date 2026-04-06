@@ -57,10 +57,13 @@ class SessionController {
 				sameSite: 'strict',
 				maxAge: 7 * 24 * 60 * 60 * 1000 
 			});
+
+			const userResponse = user.toJSON();
+			delete userResponse.password;
 			
 			return res.json({
 				token: accessToken,
-				user: { id: user.id, name: user.name }
+				user: userResponse
 			});
 
 		} catch (error) {
