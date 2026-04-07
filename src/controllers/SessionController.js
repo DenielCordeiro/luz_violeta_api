@@ -70,6 +70,62 @@ class SessionController {
 			return res.status(400).json({ error: error.message });
 		}
 	}
+
+	async refresh(req, res) {
+		try {
+			const refreshToken = req.cookies.refreshToken;
+
+			if (!refreshToken) {
+				return res.status(401).json({ error: 'Refresh Token não encontrado.' });
+			}
+
+			const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+			const user = await User.findById(decoded.id);
+
+			if (!user || user.refreshToken !== refreshToken) {
+				return res.status(401).json({ error: 'Token inválido ou expirado.' });
+			}
+
+			const newAccessToken = jwt.sign(
+				{ id: user._id }, 
+				process.env.JWT_SECRET, 
+				{ expiresIn: '30m' }
+			);
+
+			return res.json({
+				token: newAccessToken,
+				user: user,
+			});
+
+		} catch (error) {
+			return res.status(401).json({ error: 'Sessão inválida.' });
+		}
+	}
+
+	async logout(req, res) {
+		try {
+			const refreshToken = req.cookies.refreshToken;
+
+			if (refreshToken) {
+				await User.updateOne(
+					{ refreshToken: refreshToken },
+					{ $unset: { refreshToken: "" } }
+				);
+			}
+
+			res.clearCookie('refreshToken', {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict'
+			});
+
+			return res.status(204).send(); 
+
+		} catch (error) {
+			return res.status(400).json({ error: 'Erro ao fazer logout' });
+		}
+	}
 }
 
 export default new SessionController();
