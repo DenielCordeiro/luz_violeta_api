@@ -13,6 +13,7 @@ const UserSchema = new Schema({
   neighborhood: String,
   houseNumber: Number,
   productsCart: [],
+  refreshToken: String,
 },
 {
   timestamps: true,

@@ -22,6 +22,8 @@ const configMulter = multer({
 });
 
 routes.post('/session', SessionController.login);
+routes.post('/session/refresh', SessionController.refresh);
+routes.post('/session/logout', SessionController.logout);
 
 routes.get('/profile', authMiddleware, ProfileController.getUsers);
 routes.get('/profile/:user_id', ProfileController.getUser);

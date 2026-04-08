@@ -6,10 +6,12 @@ import mongoose from 'mongoose';
 
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 
 import routes from './routes.js';
 import dotenv from 'dotenv';
+
 
 dotenv.config();
 
@@ -47,7 +49,11 @@ class App {
   }
   
   middlewares() {
-    this.server.use(cors());
+    this.server.use(cors({
+      origin: 'http://localhost:4200',
+      credentials: true,
+    }));
+    this.server.use(cookieParser());
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(morgan('dev'));
