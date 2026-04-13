@@ -99,9 +99,9 @@ class ProfileController {
 	async updateUser(req, res) {
 		const schema = Yup.object().shape({
 			user_id: Yup.string().required('O ID do usuário é obrigatório'),
-			email: Yup.string().email().required('O e-mail é obrigatório'),
-			password: Yup.string().required('A senha é obrigatória'),
-			name: Yup.string().required('O nome é obrigatório'),
+			email: Yup.string().nullable().notRequired(),
+			password: Yup.string().nullable().notRequired(),
+			name: Yup.string().nullable().notRequired(),
 			cellphone: Yup.string().nullable().notRequired(),
 			postalCode: Yup.string().nullable().notRequired(),
 			state: Yup.string().nullable().notRequired(),
@@ -130,8 +130,15 @@ class ProfileController {
 				houseNumber,
 			} = req.body;
 
-			const securityForce = 6;
-			const hashedPassword = bcrypt.hashSync(password, securityForce);			
+			// const securityForce = 6;
+			// const hashedPassword = bcrypt.hashSync(password, securityForce);	
+			
+			const hashedPassword = "";
+
+			if (password && password.trim() !== "") {
+				const securityForce = 6;
+				hashedPassword = bcrypt.hashSync(password, securityForce);
+			}
 
 			const userProfile = await User.findOneAndUpdate({ _id: user_id }, {
 				email,
