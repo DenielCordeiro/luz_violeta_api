@@ -26,9 +26,8 @@ routes.post('/session/refresh', SessionController.refresh);
 routes.post('/session/logout', SessionController.logout);
 
 routes.get('/profile', authMiddleware, ProfileController.getUsers);
-routes.get('/profile/:user_id', ProfileController.getUser);
 routes.post('/profile', ProfileController.createUser);
-routes.put('/profile/:user_id', ProfileController.updateUser);
+routes.put('/profile/update', ProfileController.updateUser);
 routes.delete('/profile', ProfileController.deleteUser);
 
 routes.get('/newsletter', ImagesOfNewsletterController.getImages);
