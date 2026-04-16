@@ -74,6 +74,10 @@ class ProfileController {
 				houseNumber,
 			});
 
+			if (!newProfile) {
+				return res.status(500).json({ fail: 'Erro ao criar usuário.' });
+			}
+
 			const userProfile = newProfile.toJSON();
 			delete userProfile.password;
 
@@ -129,13 +133,12 @@ class ProfileController {
 				neighborhood,
 				houseNumber,
 			} = req.body;
-
-			// const securityForce = 6;
-			// const hashedPassword = bcrypt.hashSync(password, securityForce);	
 			
 			const hashedPassword = "";
 
-			if (password && password.trim() !== "") {
+			// Se o campo de senha for preenchido, atualiza a senha, caso contrário, mantém a senha atual
+			// .trim() para evitar senhas que sejam apenas espaços
+			if (password && password.trim() !== "") { 
 				const securityForce = 6;
 				hashedPassword = bcrypt.hashSync(password, securityForce);
 			}
@@ -152,6 +155,10 @@ class ProfileController {
 				neighborhood,
 				houseNumber,
 			});
+
+			if (!userProfile) {
+				return res.status(404).json({ fail: 'Usuário não encontrado.' });
+			}
 
 			const userProfileUpdated = userProfile.toObject();
 			delete userProfileUpdated.password;
@@ -178,12 +185,19 @@ class ProfileController {
 		try {
 			const { user_id } = req.params;
 
-			const deletedUser = await User.findByIdAndDelete(user_id);
-
-			if (!deletedUser) {
-				return res.status(404).json({ fail: 'Usuário não encontrado' });
+			if (!user_id) {
+				return res.status(400).json({ fail: 'O ID do usuário é obrigatório para exclusão.' });
 			}
 
+			// Tenta deletar e armazena o resultado
+			const deletedUser = await User.findByIdAndDelete(user_id);
+
+			// Se deletedUser for null, o ID não existia no banco
+			if (!deletedUser) {
+				return res.status(404).json({ fail: 'Usuário não encontrado.' });
+			}
+
+			// Limpa o cookie de refreshToken para encerrar a sessão do usuário
 			res.clearCookie('refreshToken', {
 				httpOnly: true,
 				secure: process.env.NODE_ENV === 'production',
@@ -191,8 +205,15 @@ class ProfileController {
 			});
 
 			return res.status(200).json({ message: 'Conta excluída e sessão encerrada com sucesso.' });
-
 		} catch (error) {
+			// Trata erro de ID malformado especificamente se desejar
+			if (error.kind === 'ObjectId') {
+				return res.status(400).json({
+					fail: 'ID de usuário inválido.',
+					messageError: error.message
+				});
+			}
+
 			return res.status(500).json({
 				fail: 'Erro ao excluir usuário',
 				messageError: error.message

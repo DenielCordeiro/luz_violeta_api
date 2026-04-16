@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
-
 const urlArchivesFirebase = 'luz-violeta-storage.appspot.com'; // Substitua pelo nome do seu bucket do Firebase Storage
 
 const __filename = fileURLToPath(import.meta.url); // Nome do arquivo atual
