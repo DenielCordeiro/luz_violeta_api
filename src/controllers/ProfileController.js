@@ -185,11 +185,12 @@ class ProfileController {
 		try {
 			const { user_id } = req.params;
 
+			console.log("id: ", user_id);
+
 			if (!user_id) {
 				return res.status(400).json({ fail: 'O ID do usuário é obrigatório para exclusão.' });
 			}
 
-			// Tenta deletar e armazena o resultado
 			const deletedUser = await User.findByIdAndDelete(user_id);
 
 			// Se deletedUser for null, o ID não existia no banco
