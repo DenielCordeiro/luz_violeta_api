@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
@@ -16,7 +15,10 @@ const UserSchema = new Schema({
   refreshToken: String,
 },
 {
-  timestamps: true,
+  timestamps: true, // Adiciona campos createdAt e updatedAt automaticamente
 });
 
-export default model('User', UserSchema);
+// Verifica se o modelo já foi registrado para evitar erros de redefinição
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
+
+export default User;
