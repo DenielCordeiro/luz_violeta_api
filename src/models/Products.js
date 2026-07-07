@@ -6,7 +6,7 @@ const ProductsSchema = new Schema({
   description: String,
   valor: Number,
   type: String,
-  groups: String,
+  category: String,
   file: {
     name: String,
     size: Number,

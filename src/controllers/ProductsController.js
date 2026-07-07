@@ -51,7 +51,7 @@ class ProductsController {
       valor: Yup.number().required(),
       name: Yup.string(),
       description: Yup.string(),
-      groups: Yup.string(),
+      category: Yup.string(),
     });
 
     const {
@@ -59,7 +59,7 @@ class ProductsController {
       valor,
       name,
       description,
-      groups,
+      category,
     } = req.body;
 
     const {
@@ -79,7 +79,7 @@ class ProductsController {
         valor,
         name,
         description,
-        groups,
+        category,
         file: {
           name: nameImage,
           size: sizeImage,
@@ -104,7 +104,7 @@ class ProductsController {
       valor: Yup.number().required(),
       name: Yup.string(),
       description: Yup.string(),
-      groups: Yup.string(),
+      category: Yup.string(),
     });
 
     const {
@@ -112,7 +112,7 @@ class ProductsController {
       valor,
       name,
       description,
-      groups,
+      category,
     } = req.body;
 
     const {
@@ -135,7 +135,7 @@ class ProductsController {
         valor,
         name,
         description,
-        groups,
+        category,
         file: {
           name: nameImage,
           size: sizeImage,
