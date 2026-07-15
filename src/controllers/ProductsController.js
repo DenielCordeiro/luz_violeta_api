@@ -2,173 +2,208 @@ import * as Yup from 'yup';
 import Products from '../models/Products.js';
 
 class ProductsController {
-  async getProducts(req, res) {
-    const schema = Yup.object().shape({ 
-      page: Yup.number().min(1).default(1),
-      limit: Yup.number().min(1).max(10).default(5), 
-    });
+	async getProducts(req, res) {
+		const schema = Yup.object().shape({
+			page: Yup.number().min(1).default(1),
+			limit: Yup.number().min(1).max(10).default(5),
+		});
 
-    try {
-      const validated = await schema.validate(req.query, { stripUnknown: true });
+		try {
+			const validated = await schema.validate(req.query, { stripUnknown: true });
 
-      const { page, limit} = validated;
+			const { page, limit } = validated;
 
-      const products = await Products.paginate({}, {
-        page,
-        limit,
-        sort: { createdAt: -1 } // ordena por data de criação
-      });
+			const products = await Products.paginate({}, {
+				page,
+				limit,
+				sort: { createdAt: -1 } // ordena por data de criação
+			});
 
-      return res.status(200).json({ products });
-    } catch (error) {
+			return res.status(200).json({ products });
+		} catch (error) {
 
-      return res.status(500).json({ 
-        fail: 'Erro ao buscar produtos',
-        messageError: error
-      });
-    }
-  }
+			return res.status(500).json({
+				fail: 'Erro ao buscar produtos',
+				messageError: error
+			});
+		}
+	}
 
-  async getProduct(req, res) {
-    const { product_id } = req.params;
+	async getProduct(req, res) {
+		const { product_id } = req.params;
 
-    try {
-      const product = await Products.findById(product_id);
-      
-      return res.status(200).json({ product });
-    } catch (error) {
+		try {
+			const product = await Products.findById(product_id);
 
-      return res.status(500).json({ 
-        fail: 'Erro ao buscar produto',
-        messageError: error
-      });
-    }
-  }
+			return res.status(200).json({ product });
+		} catch (error) {
 
-  async createProduct(req, res) {
-    const schema = Yup.object().shape({
-      type: Yup.string().required(),
-      valor: Yup.number().required(),
-      name: Yup.string(),
-      description: Yup.string(),
-      category: Yup.string(),
-    });
+			return res.status(500).json({
+				fail: 'Erro ao buscar produto',
+				messageError: error
+			});
+		}
+	}
 
-    const {
-      type,
-      valor,
-      name,
-      description,
-      category,
-    } = req.body;
+	async createProduct(req, res) {
+		const schema = Yup.object().shape({
+			name: Yup.string(),
+			description: Yup.string(),
+			included_items: Yup.string(),
+			warranty: Yup.string(),
+			price: Yup.number(),
+			stock: Yup.number(),
+			type: Yup.array().of(Yup.string()),
+			category: Yup.array().of(Yup.string()),
+			characteristics: Yup.array().of(Yup.string()),
+			deadline: Yup.date(),
+			packaging: Yup.object().shape({
+				weight: Yup.number(),
+				height: Yup.number(),
+				width: Yup.number(),
+				length: Yup.number(),
+			}),
+		});
 
-    const {
-      originalname: nameImage,
-      size: sizeImage,
-      filename: keyImage,
-      firebaseUrl: urlImage,
-    } = req.file ? req.file : '';
+		const {
+			name,
+			description,
+			included_items,
+			warranty,
+			price,
+			stock,
+			type,
+			category,
+			characteristics,
+			deadline,
+			packaging,
+		} = req.body;
 
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ fail: 'Falha na validação dos campos!' });
-    }
+		const {
+			originalname: nameImage,
+			size: sizeImage,
+			filename: keyImage,
+			firebaseUrl: urlImage,
+		} = req.file ? req.file : {};
 
-    try {
-      const product = await Products.create({
-        type,
-        valor,
-        name,
-        description,
-        category,
-        file: {
-          name: nameImage,
-          size: sizeImage,
-          key: keyImage,
-          url: urlImage,
-        },
-      });
-  
-      return res.status(200).json({ product });
-    } catch (error) {
+		if (!(await schema.isValid(req.body))) {
+			return res.status(400).json({ fail: 'Falha na validação dos campos!' });
+		}
 
-      return res.status(500).json({ 
-        fail: 'Erro ao criar produto',
-        messageError: error
-      });
-    }
-  }
+		try {
+			const product = await Products.create({
+				name,
+				description,
+				included_items,
+				warranty,
+				price,
+				stock,
+				type,
+				category,
+				characteristics,
+				deadline,
+				packaging,
+				file: nameImage ? {
+					name: nameImage,
+					size: sizeImage,
+					key: keyImage,
+					url: urlImage,
+				} : undefined,
+			});
 
-  async updateProduct(req, res) {
-    const schema = Yup.object().shape({
-      type: Yup.string().required(),
-      valor: Yup.number().required(),
-      name: Yup.string(),
-      description: Yup.string(),
-      category: Yup.string(),
-    });
+			return res.status(200).json({ product });
+		} catch (error) {
 
-    const {
-      type,
-      valor,
-      name,
-      description,
-      category,
-    } = req.body;
+			return res.status(500).json({
+				fail: 'Erro ao criar produto',
+				messageError: error.message || error
+			});
+		}
+	}
 
-    const {
-      originalname: nameImage,
-      size: sizeImage,
-      filename: keyImage,
-      firebaseUrl: urlImage,
-    } = req.file ? req.file : '';
+	async updateProduct(req, res) {
+		const schema = Yup.object().shape({
+			name: Yup.string(),
+			description: Yup.string(),
+			included_items: Yup.string(),
+			warranty: Yup.string(),
+			price: Yup.number(), 
+			stock: Yup.number(),
+			type: Yup.array().of(Yup.string()),
+			category: Yup.array().of(Yup.string()),
+			characteristics: Yup.array().of(Yup.string()),
+			deadline: Yup.date(),
+			packaging: Yup.object().shape({
+				weight: Yup.number(),
+				height: Yup.number(),
+				width: Yup.number(),
+				length: Yup.number(),
+			}),
+		});
 
-    if (!(await schema.isValid(req.body))) {
+		if (!(await schema.isValid(req.body))) {
+			return res.status(400).json({ fail: 'Falha na validação dos campos!' });
+		}
 
-      return res.status(400).json({ fail: 'Falha na validação dos campos!' });
-    }
+		const { product_id } = req.params;
 
-    const { product_id } = req.params;
+		try {
+			const productExists = await Products.findById(product_id);
 
-    try {
-      const product = await Products.updateOne({ _id: product_id }, {
-        type,
-        valor,
-        name,
-        description,
-        category,
-        file: {
-          name: nameImage,
-          size: sizeImage,
-          key: keyImage,
-          url: urlImage,
-        },
-      });
-  
-      return res.status(200).json({ product });
-    } catch (error) {
+			if (!productExists) {
+				return res.status(404).json({ fail: 'Produto não encontrado!' });
+			}
 
-      return res.status(500).json({ 
-        fail: 'Erro ao atualizar produto',
-        messageError: error
-      });
-    }
-  }
+			const updateData = { ...req.body };
 
-  async deleteProduct(req, res) {
-    const { product_id } = req.params;
+			if (req.file) {
+				const {
+				originalname: nameImage,
+				size: sizeImage,
+				filename: keyImage,
+				firebaseUrl: urlImage,
+				} = req.file;
+				
+				updateData.file = {
+				name: nameImage,
+				size: sizeImage,
+				key: keyImage,
+				url: urlImage,
+				};
+			}
 
-    try {
-      const result = await Products.findByIdAndDelete({ _id: product_id });
+			const updatedProduct = await Products.findByIdAndUpdate(
+				product_id,
+				{ $set: updateData },
+				{ new: true } 
+			);
 
-      return res.status(200).json(result)
-    } catch (error) {
+			return res.status(200).json({ product: updatedProduct });
 
-      return res.status(500).json({
-        fail: 'Erro ao excluir produto',
-        messageError: error
-      });
-    }
-  }
+		} catch (error) {
+
+			return res.status(500).json({
+				fail: 'Erro ao atualizar produto',
+				messageError: error.message || error
+			});
+		}
+	}
+
+	async deleteProduct(req, res) {
+		const { product_id } = req.params;
+
+		try {
+			const result = await Products.findByIdAndDelete({ _id: product_id });
+
+			return res.status(200).json(result)
+		} catch (error) {
+
+			return res.status(500).json({
+				fail: 'Erro ao excluir produto',
+				messageError: error
+			});
+		}
+	}
 }
 
 export default new ProductsController();
