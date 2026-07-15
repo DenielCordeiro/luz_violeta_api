@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Products from '../models/Products.js';
+import { deleteImageFirebase } from '../config/firebase.js';
 
 class ProductsController {
 	async getProducts(req, res) {
@@ -156,19 +157,26 @@ class ProductsController {
 
 			const updateData = { ...req.body };
 
+			// Se o usuário enviou uma imagem nova, atualiza o campo "file" e deleta a imagem antiga do Firebase
 			if (req.file) {
 				const {
-				originalname: nameImage,
-				size: sizeImage,
-				filename: keyImage,
-				firebaseUrl: urlImage,
+					originalname: nameImage,
+					size: sizeImage,
+					filename: keyImage,
+					firebaseUrl: urlImage,
 				} = req.file;
-				
+
+				// LIMPEZA: Se já existia uma imagem antiga cadastrada, apaga ela do Firebase
+				if (productExists.file && productExists.file.key) {
+					await deleteImageFirebase(productExists.file.key);
+				}
+
+				// Grava os metadados da nova imagem no objeto de update
 				updateData.file = {
-				name: nameImage,
-				size: sizeImage,
-				key: keyImage,
-				url: urlImage,
+					name: nameImage,
+					size: sizeImage,
+					key: keyImage,
+					url: urlImage,
 				};
 			}
 
