@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import Products, { Category, Type } from '../models/Products.js';
-import { deleteImageFirebase } from '../services/firebase.js';
 
 class ProductsController {
 	async getProducts(req, res) {

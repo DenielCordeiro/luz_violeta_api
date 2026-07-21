@@ -3,8 +3,6 @@ import multer from 'multer';
 
 import authMiddleware from './middlewares/auth.js';
 
-import uploadImage from './services/firebase.js';
-
 import SessionController from './controllers/SessionController.js';
 import ProfileController from './controllers/ProfileController.js';
 import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController.js';
@@ -31,8 +29,8 @@ routes.put('/profile/update', ProfileController.updateUser);
 routes.delete('/profile/:user_id', ProfileController.deleteUser);
 
 routes.get('/newsletter', ImagesOfNewsletterController.getImages);
-routes.post('/newsletter', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.createImage);
-routes.put('/newsletter/:news_id', configMulter.single('file'), uploadImage, ImagesOfNewsletterController.updateImage);
+routes.post('/newsletter', configMulter.single('file'), ImagesOfNewsletterController.createImage);
+routes.put('/newsletter/:news_id', configMulter.single('file'), ImagesOfNewsletterController.updateImage);
 routes.delete('/newsletter/:news_id', ImagesOfNewsletterController.deleteImage);
 
 routes.get('/newsletter/review', ReviewController.getReviews);
@@ -41,9 +39,8 @@ routes.put('/newsletter/review/:review_id', ReviewController.updateReview);
 routes.delete('/newsletter/review/:review_id', ReviewController.deleteReview);
 
 routes.get('/products', ProductsController.getProducts);
-routes.get('/products/:product_id', ProductsController.getProduct);
-routes.post('/products', configMulter.single('file'), uploadImage, ProductsController.createProduct);
-routes.put('/products/:product_id', configMulter.single('file'), uploadImage, ProductsController.updateProduct);
+routes.post('/products', configMulter.single('file'), ImagesOfNewsletterController.createImage);
+routes.put('/products/:product_id', configMulter.single('file'), ImagesOfNewsletterController.updateImage);
 routes.delete('/products/:product_id', ProductsController.deleteProduct);
 
 routes.put('/save_cart/:user_id', CartController.addCartProduct);
