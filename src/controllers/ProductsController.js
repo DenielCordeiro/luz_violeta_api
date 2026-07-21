@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import Products from '../models/Products.js';
-import { deleteImageFirebase } from '../config/firebase.js';
+import Products, { Category, Type } from '../models/Products.js';
+import { deleteImageFirebase } from '../services/firebase.js';
 
 class ProductsController {
 	async getProducts(req, res) {
@@ -17,6 +17,7 @@ class ProductsController {
 			const products = await Products.paginate({}, {
 				page,
 				limit,
+				populate: ['category', 'type'],
 				sort: { createdAt: -1 } // ordena por data de criação
 			});
 
@@ -30,171 +31,112 @@ class ProductsController {
 		}
 	}
 
-	async getProduct(req, res) {
-		const { product_id } = req.params;
-
-		try {
-			const product = await Products.findById(product_id);
-
-			return res.status(200).json({ product });
-		} catch (error) {
-
-			return res.status(500).json({
-				fail: 'Erro ao buscar produto',
-				messageError: error
-			});
-		}
-	}
-
 	async createProduct(req, res) {
-		const schema = Yup.object().shape({
-			name: Yup.string(),
-			description: Yup.string(),
-			included_items: Yup.string(),
-			warranty: Yup.string(),
-			price: Yup.number(),
-			stock: Yup.number(),
-			type: Yup.array().of(Yup.string()),
-			category: Yup.array().of(Yup.string()),
-			characteristics: Yup.array().of(Yup.string()),
-			deadline: Yup.date(),
-			packaging: Yup.object().shape({
-				weight: Yup.number(),
-				height: Yup.number(),
-				width: Yup.number(),
-				length: Yup.number(),
-			}),
-		});
+        if (req.body.packaging && typeof req.body.packaging === 'string') {
+            try {
+                req.body.packaging = JSON.parse(req.body.packaging);
+            } catch (e) {
+                return res.status(400).json({ fail: 'Formato de packaging inválido!' });
+            }
+        }
 
-		const {
-			name,
-			description,
-			included_items,
-			warranty,
-			price,
-			stock,
-			type,
-			category,
-			characteristics,
-			deadline,
-			packaging,
-		} = req.body;
+        const schema = Yup.object().shape({
+            name: Yup.string().required('Nome é obrigatório'),
+            description: Yup.string(),
+            included_items: Yup.string(),
+            warranty: Yup.string(),
+            price: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
+            stock: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
+            type: Yup.string().required('Tipo é obrigatório'),
+            category: Yup.string().required('Categoria é obrigatória'),
+            characteristics: Yup.string(),
+            deadline: Yup.date().nullable(),
+            packaging: Yup.object().shape({
+                weight: Yup.number().nullable(),
+                height: Yup.number().nullable(),
+                width: Yup.number().nullable(),
+                length: Yup.number().nullable(),
+            }),
+        });
 
-		const {
-			originalname: nameImage,
-			size: sizeImage,
-			filename: keyImage,
-			firebaseUrl: urlImage,
-		} = req.file ? req.file : {};
+        if (!(await schema.isValid(req.body))) {
+            return res.status(400).json({ fail: 'Falha na validação dos campos!' });
+        }
 
-		if (!(await schema.isValid(req.body))) {
-			return res.status(400).json({ fail: 'Falha na validação dos campos!' });
-		}
+        const {
+            name,
+            description,
+            included_items,
+            warranty,
+            price,
+            stock,
+            type: typeName,
+            category: categoryName,
+            characteristics,
+            deadline,
+            packaging,
+        } = req.body;
 
-		try {
-			const product = await Products.create({
-				name,
-				description,
-				included_items,
-				warranty,
-				price,
-				stock,
-				type,
-				category,
-				characteristics,
-				deadline,
-				packaging,
-				file: nameImage ? {
-					name: nameImage,
-					size: sizeImage,
-					key: keyImage,
-					url: urlImage,
-				} : undefined,
-			});
+        const {
+            originalname: nameImage,
+            size: sizeImage,
+            filename: keyImage,
+            firebaseUrl: urlImage,
+        } = req.file ? req.file : {};                                                   
 
-			return res.status(200).json({ product });
-		} catch (error) {
+        try {
+            let categoryId = null;
+            let typeId = null;
 
-			return res.status(500).json({
-				fail: 'Erro ao criar produto',
-				messageError: error.message || error
-			});
-		}
-	}
+            if (categoryName) {
+                let categoryDoc = await Category.findOne({ name: new RegExp(`^${categoryName}$`, 'i') });
+                if (!categoryDoc) {
+                    categoryDoc = await Category.create({ name: categoryName });
+                }
+                categoryId = categoryDoc._id;
+            }
+
+            if (typeName) {
+                let typeDoc = await Type.findOne({ name: new RegExp(`^${typeName}$`, 'i') });
+                if (!typeDoc) {
+                    typeDoc = await Type.create({ name: typeName });
+                }
+                typeId = typeDoc._id;
+            }
+
+            const product = await Products.create({
+                name,
+                description,
+                included_items,
+                warranty,
+                price,
+                stock,
+                type: typeId,
+                category: categoryId,
+                characteristics,
+                deadline,
+                packaging,
+                file: nameImage ? {
+                    name: nameImage,
+                    size: sizeImage,
+                    key: keyImage,
+                    url: urlImage,
+                } : undefined,
+            });
+
+            return res.status(201).json({ product });
+
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                fail: 'Erro ao criar produto',
+                messageError: error.message || error
+            });
+        }
+    }
 
 	async updateProduct(req, res) {
-		const schema = Yup.object().shape({
-			name: Yup.string(),
-			description: Yup.string(),
-			included_items: Yup.string(),
-			warranty: Yup.string(),
-			price: Yup.number(), 
-			stock: Yup.number(),
-			type: Yup.array().of(Yup.string()),
-			category: Yup.array().of(Yup.string()),
-			characteristics: Yup.array().of(Yup.string()),
-			deadline: Yup.date(),
-			packaging: Yup.object().shape({
-				weight: Yup.number(),
-				height: Yup.number(),
-				width: Yup.number(),
-				length: Yup.number(),
-			}),
-		});
-
-		if (!(await schema.isValid(req.body))) {
-			return res.status(400).json({ fail: 'Falha na validação dos campos!' });
-		}
-
-		const { product_id } = req.params;
-
-		try {
-			const productExists = await Products.findById(product_id);
-
-			if (!productExists) {
-				return res.status(404).json({ fail: 'Produto não encontrado!' });
-			}
-
-			const updateData = { ...req.body };
-
-			// Se o usuário enviou uma imagem nova, atualiza o campo "file" e deleta a imagem antiga do Firebase
-			if (req.file) {
-				const {
-					originalname: nameImage,
-					size: sizeImage,
-					filename: keyImage,
-					firebaseUrl: urlImage,
-				} = req.file;
-
-				// LIMPEZA: Se já existia uma imagem antiga cadastrada, apaga ela do Firebase
-				if (productExists.file && productExists.file.key) {
-					await deleteImageFirebase(productExists.file.key);
-				}
-
-				// Grava os metadados da nova imagem no objeto de update
-				updateData.file = {
-					name: nameImage,
-					size: sizeImage,
-					key: keyImage,
-					url: urlImage,
-				};
-			}
-
-			const updatedProduct = await Products.findByIdAndUpdate(
-				product_id,
-				{ $set: updateData },
-				{ new: true } 
-			);
-
-			return res.status(200).json({ product: updatedProduct });
-
-		} catch (error) {
-
-			return res.status(500).json({
-				fail: 'Erro ao atualizar produto',
-				messageError: error.message || error
-			});
-		}
+        // const updatedProduct = await Products.findByIdAndUpdate();
 	}
 
 	async deleteProduct(req, res) {
