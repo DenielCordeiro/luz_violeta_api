@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Products, { Category, Type } from '../models/Products.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 
 class ProductsController {
 	async getProducts(req, res) {
@@ -76,12 +77,10 @@ class ProductsController {
             packaging,
         } = req.body;
 
-        const {
-            originalname: nameImage,
-            size: sizeImage,
-            filename: keyImage,
-            firebaseUrl: urlImage,
-        } = req.file ? req.file : {};                                                   
+        let fileData = undefined;
+        if (req.file) {
+            fileData = await uploadToCloudinary(req.file);
+        }                                                  
 
         try {
             let categoryId = null;
@@ -115,12 +114,7 @@ class ProductsController {
                 characteristics,
                 deadline,
                 packaging,
-                file: nameImage ? {
-                    name: nameImage,
-                    size: sizeImage,
-                    key: keyImage,
-                    url: urlImage,
-                } : undefined,
+                file: fileData,
             });
 
             return res.status(201).json({ product });
