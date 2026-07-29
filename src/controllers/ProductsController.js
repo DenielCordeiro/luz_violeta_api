@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import Products, { Category, Type } from '../models/Products.js';
-import { uploadToCloudinary, cloudinary } from '../config/cloudinary.js';
+import cloudinary from 'cloudinary';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 
 class ProductsController {
 	async getProducts(req, res) {
