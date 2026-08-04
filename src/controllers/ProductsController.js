@@ -51,7 +51,7 @@ class ProductsController {
             type: Yup.string(),
             category: Yup.string(),
             characteristics: Yup.string(),
-            deadline: Yup.date().nullable(),
+            deadline: Yup.string(),
             packaging: Yup.object().shape({
                 weight: Yup.number().nullable(),
                 height: Yup.number().nullable(),
@@ -130,15 +130,35 @@ class ProductsController {
     }
 
 	async updateProduct(req, res) {
-        const { id } = req.params;
+        const { product_id } = req.params;
 
+        // Validação do campo packaging, caso seja enviado como string
         if (req.body.packaging && typeof req.body.packaging === 'string') {
             try {
-                req.body.packaging = JSON.parse(req.body.packaging);
+                req.body.packaging = JSON.parse(req.body.packaging); // Converte a string JSON em objeto
             } catch (e) {
                 return res.status(400).json({ fail: 'Formato de packaging inválido!' });
             }
         }
+
+        const schema = Yup.object().shape({
+            name: Yup.string(),
+            description: Yup.string(),
+            included_items: Yup.string(),
+            warranty: Yup.string(),
+            price: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
+            stock: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
+            type: Yup.string(),
+            category: Yup.string(),
+            characteristics: Yup.string(),
+            deadline: Yup.string(),
+            packaging: Yup.object().shape({
+                weight: Yup.number().nullable(),
+                height: Yup.number().nullable(),
+                width: Yup.number().nullable(),
+                length: Yup.number().nullable(),
+            }),
+        });
 
         try {
             await schema.validate(req.body, { abortEarly: false });
@@ -150,7 +170,7 @@ class ProductsController {
         }
 
         try {
-            const productExists = await Products.findById(id);
+            const productExists = await Products.findById(product_id);
 
             if (!productExists) {
                 return res.status(404).json({ fail: 'Produto não encontrado!' });
@@ -173,40 +193,46 @@ class ProductsController {
             let categoryId = productExists.category;
 
             if (categoryName) {
+                // Procura a categoria pelo nome, ignorando maiúsculas e minúsculas
                 let categoryDoc = await Category.findOne({ name: new RegExp(`^${categoryName}$`, 'i') });
+
                 if (!categoryDoc) {
                     categoryDoc = await Category.create({ name: categoryName });
                 }
+
                 categoryId = categoryDoc._id;
             }
 
             let typeId = productExists.type;
 
             if (typeName) {
+                // Procura o tipo pelo nome, ignorando maiúsculas e minúsculas
                 let typeDoc = await Type.findOne({ name: new RegExp(`^${typeName}$`, 'i') });
+
                 if (!typeDoc) {
                     typeDoc = await Type.create({ name: typeName });
                 }
+
                 typeId = typeDoc._id;
             }
 
             let fileData = productExists.file;
 
             if (req.file) {
+                // Se já existia imagem anterior, remove no Cloudinary
                 if (productExists.file && productExists.file.key) {
                     try {
                         await cloudinary.uploader.destroy(productExists.file.key);
-                        console.log(`Imagem antiga (${productExists.file.key}) removida do Cloudinary!`);
                     } catch (destroyError) {
                         console.error('Aviso: Falha ao deletar imagem antiga no Cloudinary:', destroyError.message);
                     }
-                } else {
-                    fileData = await uploadToCloudinary(req.file);
                 }
+                
+                fileData = await uploadToCloudinary(req.file);
             }
 
             const updatedProduct = await Products.findByIdAndUpdate(
-                id,
+                product_id,
                 {
                     name,
                     description,
