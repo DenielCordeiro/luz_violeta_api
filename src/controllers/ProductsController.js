@@ -262,10 +262,10 @@ class ProductsController {
     }
 
 	async deleteProduct(req, res) {
-        const { id } = req.params;
+        const { product_id } = req.params;
 
         try {
-            const product = await Products.findById(id);
+            const product = await Products.findById(product_id);
 
             if (!product) {
                 return res.status(404).json({ fail: 'Produto não encontrado!' });
@@ -277,15 +277,16 @@ class ProductsController {
                 } catch (err) {
                     console.error('Erro ao deletar imagem no Cloudinary:', err);
                 }
-            } else {
-                await Products.findByIdAndDelete(id);
-            }          
+            }
 
-            return res.status(200).json({ message: 'Produto e imagem excluídos com sucesso!' });
+            await Products.findByIdAndDelete(product_id);
+
+            return res.status(200).json({ message: 'Produto excluído com sucesso!' });
         } catch (error) {
-            return res.status(500).json({ fail: 'Erro ao deletar produto' });
+            console.error('Erro ao deletar produto:', error);
+            return res.status(500).json({ fail: 'Erro interno ao deletar produto' });
         }
-	}
+    }
 }
 
 export default new ProductsController();
