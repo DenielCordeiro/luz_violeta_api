@@ -7,7 +7,7 @@ class ProductsController {
 	async getProducts(req, res) {
 		const schema = Yup.object().shape({
 			page: Yup.number().min(1).default(1),
-			limit: Yup.number().min(1).max(10).default(5),
+			limit: Yup.number().min(1).max(6).default(6),
 		});
 
 		try {
