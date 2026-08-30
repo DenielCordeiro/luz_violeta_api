@@ -39,6 +39,7 @@ routes.put('/newsletter/review/:review_id', ReviewController.updateReview);
 routes.delete('/newsletter/review/:review_id', ReviewController.deleteReview);
 
 routes.get('/products', ProductsController.getProducts);
+routes.get('/products/:product_id', ProductsController.getProductById);
 routes.post('/products', configMulter.single('file'), ProductsController.createProduct);
 routes.put('/products/:product_id', configMulter.single('file'), ProductsController.updateProduct);
 routes.delete('/products/:product_id', ProductsController.deleteProduct);

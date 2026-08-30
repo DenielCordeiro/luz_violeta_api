@@ -32,6 +32,25 @@ class ProductsController {
 		}
 	}
 
+    async getProductById(req, res) {
+        const { product_id } = req.params;
+
+        try {
+            const product = await Products.findById(product_id).populate(['category', 'type']);
+
+            if (!product) {
+                return res.status(404).json({ fail: 'Produto não encontrado!' });
+            }
+
+            return res.status(200).json({ product });
+        } catch (error) {
+            return res.status(500).json({
+                fail: 'Erro ao buscar produto',
+                messageError: error
+            });
+        } 
+    }
+
 	async createProduct(req, res) {
         if (req.body.packaging && typeof req.body.packaging === 'string') {
             try {
