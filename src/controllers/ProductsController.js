@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
-import Products, { Category, Type } from '../models/Products.js';
 import cloudinary from 'cloudinary';
 import { uploadToCloudinary } from '../config/cloudinary.js';
+import Products, { Category, Type } from '../models/Products.js';
 
 class ProductsController {
 	async getProducts(req, res) {
@@ -51,6 +51,25 @@ class ProductsController {
         } 
     }
 
+    async getCharacteristics(req, res) {
+        try {
+            const [categories, types] = await Promise.all([
+                Category.find().select('name -_id').sort({ name: 1 }).lean(),  //Select: traz apenas o campo 'name', ignora o '_id' (-_id), 
+                Type.find().select('name -_id').sort({ name: 1 }).lean() // Sort: Ordena por nome A-Z (1) e .lean() para retornar objetos JS puros (mais leve)
+            ]);
+
+            return res.status(200).json({
+                categories: categories.map(category => category.name),
+                types: types.map(type => type.name)
+            });
+        } catch (error) {
+            return res.status(500).json({
+                fail: 'Erro ao buscar categorias e tipos',
+                messageError: error.message || error
+            });
+        }
+    }
+  
 	async createProduct(req, res) {
         if (req.body.packaging && typeof req.body.packaging === 'string') {
             try {
