@@ -24,7 +24,6 @@ const ProductsSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Category'
     },
-    characteristics: String,
     deadline: Date,
     packaging: {
         weight: Number,

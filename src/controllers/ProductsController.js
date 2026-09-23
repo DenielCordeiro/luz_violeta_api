@@ -88,7 +88,6 @@ class ProductsController {
             stock: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
             type: Yup.string(),
             category: Yup.string(),
-            characteristics: Yup.string(),
             deadline: Yup.string(),
             packaging: Yup.object().shape({
                 weight: Yup.number().nullable(),
@@ -188,7 +187,6 @@ class ProductsController {
             stock: Yup.number().transform((value, originalValue) => originalValue === '' ? null : value).nullable(),
             type: Yup.string(),
             category: Yup.string(),
-            characteristics: Yup.string(),
             deadline: Yup.string(),
             packaging: Yup.object().shape({
                 weight: Yup.number().nullable(),
