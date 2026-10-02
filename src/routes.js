@@ -3,19 +3,19 @@ import multer from 'multer';
 
 import authMiddleware from './middlewares/auth.js';
 
-import SessionController from './controllers/SessionController.js';
-import ProfileController from './controllers/ProfileController.js';
+import SessionController from './controllers/Session.Controller.js';
+import ProfileController from './controllers/Profile.Controller.js';
 
-import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController.js';
-import ReviewController from './controllers/ReviewController.js';
+import ImagesOfNewsletterController from './controllers/Images.Newsletter.Controller.js';
+import ReviewController from './controllers/Review.Controller.js';
 
-import ProductsController from './controllers/ProductsController.js';
-import FilterProductsController from './controllers/Filter.Products.controller.js';
-import FreightController from './controllers/FreightController.js';
+import ProductsController from './controllers/Products.Controller.js';
+import FilterProductsController from './controllers/Filter.Products.Controller.js';
+import FreightController from './controllers/Freight.Controller.js';
 
-import CartController from './controllers/CartController.js';
+import CartController from './controllers/Cart.Controller.js';
 
-import AboutController from './controllers/AboutController.js';
+import AboutController from './controllers/About.Controller.js';
 
 
 const routes = new Router();
