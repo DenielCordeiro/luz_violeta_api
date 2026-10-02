@@ -5,12 +5,18 @@ import authMiddleware from './middlewares/auth.js';
 
 import SessionController from './controllers/SessionController.js';
 import ProfileController from './controllers/ProfileController.js';
+
 import ImagesOfNewsletterController from './controllers/ImagesOfNewsletterController.js';
 import ReviewController from './controllers/ReviewController.js';
+
 import ProductsController from './controllers/ProductsController.js';
-import CartController from './controllers/CartController.js';
-import AboutController from './controllers/AboutController.js';
+import FilterProductsController from './controllers/Filter.Products.controller.js';
 import FreightController from './controllers/FreightController.js';
+
+import CartController from './controllers/CartController.js';
+
+import AboutController from './controllers/AboutController.js';
+
 
 const routes = new Router();
 
@@ -39,6 +45,7 @@ routes.put('/newsletter/review/:review_id', ReviewController.updateReview);
 routes.delete('/newsletter/review/:review_id', ReviewController.deleteReview);
 
 routes.get('/products', ProductsController.getProducts);
+routes.get('/products/filter', FilterProductsController.getFilteredProducts);
 routes.get('/products/characteristics', ProductsController.getCharacteristics);
 routes.get('/products/:product_id', ProductsController.getProductById);
 routes.post('/products', configMulter.single('file'), ProductsController.createProduct);

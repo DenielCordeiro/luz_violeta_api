@@ -7,7 +7,7 @@ class ProductsController {
 	async getProducts(req, res) {
 		const schema = Yup.object().shape({
 			page: Yup.number().min(1).default(1),
-			limit: Yup.number().min(1).max(6).default(6),
+			limit: Yup.number().min(1).max(10).default(10),
 		});
 
 		try {
@@ -69,7 +69,7 @@ class ProductsController {
             });
         }
     }
-  
+    
 	async createProduct(req, res) {
         if (req.body.packaging && typeof req.body.packaging === 'string') {
             try {
