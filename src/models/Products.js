@@ -16,9 +16,14 @@ const ProductsSchema = new Schema({
     warranty: String,
     price: Number,
     stock: Number,
-    type: { type: Schema.Types.ObjectId, ref: 'Type' },
-    category: { type: Schema.Types.ObjectId, ref: 'Category' },
-    characteristics: String,
+    type: { 
+        type: Schema.Types.ObjectId,
+        ref: 'Type'
+    },
+    category: { 
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+    },
     deadline: Date,
     packaging: {
         weight: Number,
